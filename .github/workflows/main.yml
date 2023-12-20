@@ -10,3 +10,5 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: base_pack
+        run: ls
