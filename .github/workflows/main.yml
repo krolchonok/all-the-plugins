@@ -1,0 +1,14 @@
+name: Release
+on:
+  push:
+    branches: "**"
+
+jobs:
+  zip:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Build standart
+        runs: ls
