@@ -45,6 +45,7 @@ jobs:
           mkdir -p base_pack_build/apps_data/totp
           mv unlsh/artifacts-totp/* base_pack_build/apps_data/totp/
           zip -r base_pack.zip base_pack_build
+          tar -czvf base_pack.tgz base_pack_build
           ls -la
           
       - name: Create Release
@@ -53,6 +54,7 @@ jobs:
             repo_token: ${{ secrets.GITHUB_TOKEN }}
             file: |
               ./base_pack.zip
+              ./base_pack.tgz
             tag: ${{ github.ref }}
             overwrite: true
             body: "file for upload in flipper"
@@ -87,6 +89,7 @@ jobs:
           mkdir extra_pack_build
           mv unlsh/artifacts-extra/ extra_pack_build
           zip -r extra_pack.zip extra_pack_build
+          tar -czvf extra_pack.tgz extra_pack_build
           ls -la
       - name: Create Release
         uses: svenstaro/upload-release-action@v2
@@ -94,6 +97,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: |
             ./extra_pack.zip
+            ./extra_pack.tgz
           tag: ${{ github.ref }}
           overwrite: true
           body: "file for upload in flipper"
