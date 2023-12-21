@@ -48,14 +48,28 @@ jobs:
           tar -czvf base_pack.tgz base_pack_build
           ls -la
           
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Add tgz base
+        uses: svenstaro/upload-release-action@v2
         with:
-          files: |
-            base_pack.tgz
-            base_pack.zip
-
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
+            file: |
+              ./base_pack.tgz
+            tag: ${{ github.ref }}
+            overwrite: true
+            body: "file for upload in flipper"
+            prerelease: false
+      
+      - name: Add zip base
+        uses: svenstaro/upload-release-action@v2
+        with:
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
+            file: |
+              ./base_pack.zip
+            tag: ${{ github.ref }}
+            overwrite: true
+            body: "file for upload in flipper"
+            prerelease: false
+            
       - name: extra_pack
         run: |
           rm -rf unlsh/build/
@@ -87,10 +101,25 @@ jobs:
           zip -r extra_pack.zip extra_pack_build
           tar -czvf extra_pack.tgz extra_pack_build
           ls -la
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+          
+      - name: Add zip extra
+        uses: svenstaro/upload-release-action@v2
         with:
-          files: |
-            extra_pack.tgz
-            extra_pack.zip
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
+            file: |
+              ./extra_pack.zip
+            tag: ${{ github.ref }}
+            overwrite: true
+            body: "file for upload in flipper"
+            prerelease: false
+            
+      - name: Add tgz extra
+        uses: svenstaro/upload-release-action@v2
+        with:
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
+            file: |
+              ./extra_pack.tgz
+            tag: ${{ github.ref }}
+            overwrite: true
+            body: "file for upload in flipper"
+            prerelease: false
