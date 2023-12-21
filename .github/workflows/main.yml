@@ -1,0 +1,88 @@
+name: Release
+on:
+  push:
+    branches: "**"
+
+jobs:
+  zip:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: base_pack
+        run: |
+          git clone https://github.com/krolchonok/unlsh
+          rm -rf unlsh/build/
+          rm -rf unlsh/dist/
+          rm -rf unlsh/.sconsign.dblite
+          mv base_pack/* unlsh/applications_user/
+          ./parse_api_ver.sh
+          cd unlsh
+          export FBT_GIT_SUBMODULE_SHALLOW=1
+          ./fbt COMPACT=1 DEBUG=0 updater_package
+          mkdir artifacts-base
+          mkdir artifacts-totp
+          mkdir dist/f7-C/f7-update-local/resources
+          tar xf dist/f7-C/f7-update-local/resources.tar -C dist/f7-C/f7-update-local/resources
+          mv dist/f7-C/f7-update-local/resources/apps/* artifacts-base/
+          mv dist/f7-C/f7-update-local/resources/apps_data/totp/* artifacts-totp/
+          ls -laS artifacts-base
+          ls -laS artifacts-totp
+          ls -laS artifacts-totp/plugins
+          rm -f artifacts-base/GPIO/gpio.fap
+          rm -f artifacts-base/iButton/ibutton.fap
+          rm -f artifacts-base/Infrared/infrared.fap
+          rm -f artifacts-base/NFC/nfc.fap
+          rm -f artifacts-base/RFID/lfrfid.fap
+          rm -f artifacts-base/Sub-GHz/subghz_remote.fap
+          rm -f artifacts-base/Tools/clock.fap
+          rm -f artifacts-base/USB/bad_usb.fap
+          rm -f artifacts-base/USB/u2f.fap
+          cd ..
+          mkdir base_pack_build
+          mv unlsh/artifacts-base/ base_pack_build
+          mkdir -p base_pack_build/apps_data/totp
+          mv unlsh/artifacts-totp/* base_pack_build/apps_data/totp/
+          zip -r base_pack.zip base_pack_build
+      - name: extra_pack
+        run: |
+          rm -rf unlsh/build/
+          rm -rf unlsh/dist/
+          rm -rf unlsh/.sconsign.dblite
+          rm -rf unlsh/applications_user/*
+          mv apps_source_code/* unlsh/applications_user/
+          mv non_catalog_apps/* unlsh/applications_user/
+          cd unlsh
+          export FBT_GIT_SUBMODULE_SHALLOW=1
+          ./fbt COMPACT=1 DEBUG=0 updater_package
+          mkdir artifacts-extra
+          mkdir dist/f7-C/f7-update-local/resources
+          tar xf dist/f7-C/f7-update-local/resources.tar -C dist/f7-C/f7-update-local/resources
+          mv dist/f7-C/f7-update-local/resources/apps/* artifacts-extra/
+          ls -laS artifacts-extra
+          rm -f artifacts-extra/GPIO/gpio.fap
+          rm -f artifacts-extra/iButton/ibutton.fap
+          rm -f artifacts-extra/Infrared/infrared.fap
+          rm -f artifacts-extra/NFC/nfc.fap
+          rm -f artifacts-extra/RFID/lfrfid.fap
+          rm -f artifacts-extra/Sub-GHz/subghz_remote.fap
+          rm -f artifacts-extra/Tools/clock.fap
+          rm -f artifacts-extra/USB/bad_usb.fap
+          rm -f artifacts-extra/USB/u2f.fap
+          cd ..
+          mkdir extra_pack_build
+          mv unlsh/artifacts-extra/ extra_pack_build
+          zip -r extra_pack.zip extra_pack_build
+
+      - name: Create Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: |
+            ./base_pack.zip
+            ./extra_pack.zip
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: "file for upload in flipper"
+          prerelease: false
