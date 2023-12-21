@@ -48,17 +48,13 @@ jobs:
           tar -czvf base_pack.tgz base_pack_build
           ls -la
           
-      - name: Create Release
-        uses: svenstaro/upload-release-action@v2
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-            repo_token: ${{ secrets.GITHUB_TOKEN }}
-            file: |
-              ./base_pack.zip
-              ./base_pack.tgz
-            tag: ${{ github.ref }}
-            overwrite: true
-            body: "file for upload in flipper"
-            prerelease: false
+          files: |
+            base_pack.tgz
+            base_pack.zip
 
       - name: extra_pack
         run: |
@@ -91,14 +87,10 @@ jobs:
           zip -r extra_pack.zip extra_pack_build
           tar -czvf extra_pack.tgz extra_pack_build
           ls -la
-      - name: Create Release
-        uses: svenstaro/upload-release-action@v2
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: |
-            ./extra_pack.zip
-            ./extra_pack.tgz
-          tag: ${{ github.ref }}
-          overwrite: true
-          body: "file for upload in flipper"
-          prerelease: false
+          files: |
+            extra_pack.tgz
+            extra_pack.zip
