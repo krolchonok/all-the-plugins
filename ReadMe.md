@@ -13,7 +13,7 @@ Apps contains changes needed to compile them on latest firmware, fixes has been 
 
 The Flipper and its community wouldn't be as rich as it is without your contributions and support. Thank you for all you have done.
 
-### Apps checked & updated at `21 Dec 21:34 GMT +3`
+### Apps checked & updated at `26 Dec 23:01 GMT +3`
 
 
 # Default pack
@@ -242,6 +242,7 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | QR Code | ![Tools Badge] | [by bmatcuk](https://github.com/bmatcuk/flipperzero-qrcode) |  | ![None Badge] |
 | Resistance calculator | ![Tools Badge] | [by instantiator](https://github.com/instantiator/flipper-zero-experimental-apps) |  | [![UFW Badge]](https://lab.flipper.net/apps/resistors) |
 | Simple calendar app | ![Tools Badge] | [by Adiras](https://github.com/Adiras/flipperzero-calendar) |  | ![None Badge] |
+| Programmer Calculator | ![Tools Badge] | [by armixz](https://github.com/armixz/Flipper-Zero-Programmer-Calculator) |  | ![None Badge] |
 | USB HID Autofire | ![USB Badge] | [by pbek](https://github.com/pbek/usb_hid_autofire) |  | ![None Badge] |
 | USB Consumer Control | ![USB Badge] | [by WithSecureLabs](https://github.com/WithSecureLabs/usb-consumer-control/tree/main) |  | ![None Badge] |
 
