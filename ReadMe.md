@@ -13,7 +13,7 @@ Apps contains changes needed to compile them on latest firmware, fixes has been 
 
 The Flipper and its community wouldn't be as rich as it is without your contributions and support. Thank you for all you have done.
 
-### Apps checked & updated at `6 Jan 22:41 GMT +3`
+### Apps checked & updated at `13 Jan 23:01 GMT +3`
 
 
 # Default pack
@@ -98,7 +98,7 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | Arkanoid | ![Games Badge] | by xMasterX | refactored by xMasterX, [original by gotnull](https://github.com/gotnull/flipperzerofirmwarewPlugins) | [![UFW Badge]](https://lab.flipper.net/apps/arkanoid) |
 | Tic Tac Toe | ![Games Badge] | by xMasterX | refactored by xMasterX, [original by gotnull](https://github.com/gotnull/flipperzerofirmwarewPlugins) | [![UFW Badge]](https://lab.flipper.net/apps/tictactoe) |
 | Tetris (with fixes) | ![Games Badge] | [by jeffplang](https://github.com/jeffplang/flipperzerofirmware/tree/tetris_game/applications/tetris) & [noiob](https://github.com/noiob) |  | [![UFW Badge]](https://lab.flipper.net/apps/tetris_game) |
-| Minesweeper | ![Games Badge] | [by panki27](https://github.com/panki27/minesweeper) |  | [![UFW Badge]](https://lab.flipper.net/apps/minesweeper) |
+| Mine Sweeper | ![Games Badge] | [by squee72564](https://github.com/squee72564/F0_Minesweeper_Fap) | Old version by @panki27 is published in official catalogue, will be replaced with redux version by @squee72564 | [![UFW Badge]](https://lab.flipper.net/apps/minesweeper) |
 | Heap Defence (aka Stack Attack) | ![Games Badge] | by xMasterX | ported to latest firmware by xMasterX, [original by wquinoa & Vedmein](https://github.com/Vedmein/flipperzerofirmware/tree/hd/svistoperdelki) | [![UFW Badge]](https://lab.flipper.net/apps/heap_defence) |
 | Game15 | ![Games Badge] | [by x27](https://github.com/x27/flipperzerogame15) |  | [![UFW Badge]](https://lab.flipper.net/apps/game15) |
 | Solitaire | ![Games Badge] | [by teeebor](https://github.com/teeebor/flipper_games) |  | ![None Badge] |
@@ -216,6 +216,8 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | USB Midi | ![Media Badge] | [by DrZlo13](https://github.com/DrZlo13/flipper-zero-usb-midi) |  | ![None Badge] |
 | Video Player | ![Media Badge] | [by LTVA1](https://github.com/LTVA1/flipper-zero-video-player) | <- Follow link to download examples and learn how to convert videos | ![None Badge] |
 | Music Tracker | ![Media Badge] | [by DrZlo13](https://github.com/DrZlo13/flipper-zero-music-tracker) |  | [![UFW Badge]](https://lab.flipper.net/apps/zero_tracker) |
+| The C Programming Language | ![Media Badge] | [by armixz](https://github.com/armixz/Flipper-Zero-The-C-Programming-Language) |  | ![None Badge] |
+| Cryptography Dictionary | ![Media Badge] | [by armixz](https://github.com/armixz/Flipper-Zero-Crypto-Dictionary) |  | ![None Badge] |
 | Mifare Fuzzer | ![NFC Badge] | [by spheeere98](https://github.com/spheeere98/mifare_fuzzer) | Fixed crash on exit. / Update!: Ported to new NFC API [by @Sil333033](https://github.com/Flipper-XFW/Xtreme-Firmware/commit/ac5744328a28b73fb5022ce7baaa4332a824a739) | [![UFW Badge]](https://lab.flipper.net/apps/mifare_fuzzer) |
 | Seader | ![NFC Badge] | [by bettse](https://github.com/bettse/seader/tree/main) | `Interface with a SAM from the Flipper Zero over UART` | [![Author Badge]](https://lab.flipper.net/apps/seader) |
 | VB Lab Migration Assistant | ![NFC Badge] | [by GMMan (cyanic)](https://github.com/GMMan/flipperzero-vb-migrate) |  | [![Author Badge]](https://lab.flipper.net/apps/vb_migrate) |
