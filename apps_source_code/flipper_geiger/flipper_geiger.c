@@ -147,7 +147,7 @@ static void draw_callback(Canvas* canvas, void* ctx) {
     } else {
         canvas_set_font(canvas, FontPrimary);
         canvas_draw_str_aligned(canvas, 64, 10, AlignCenter, AlignBottom, "Geiger Counter");
-        canvas_draw_str_aligned(canvas, 64, 20, AlignCenter, AlignBottom, "Version 20230806");
+        canvas_draw_str_aligned(canvas, 64, 20, AlignCenter, AlignBottom, "Version 20240311");
         canvas_draw_str_aligned(canvas, 64, 40, AlignCenter, AlignBottom, "github.com/nmrr");
     }
 }
@@ -187,7 +187,6 @@ int32_t flipper_geiger_app() {
     EventApp event;
     FuriMessageQueue* event_queue = furi_message_queue_alloc(8, sizeof(EventApp));
 
-    furi_hal_gpio_init(&gpio_ext_pa7, GpioModeInterruptFall, GpioPullUp, GpioSpeedVeryHigh);
     furi_hal_pwm_start(FuriHalPwmOutputIdLptim2PA4, 5, 50);
 
     mutexStruct mutexVal;
@@ -215,6 +214,8 @@ int32_t flipper_geiger_app() {
     view_port_input_callback_set(view_port, input_callback, event_queue);
 
     furi_hal_gpio_add_int_callback(&gpio_ext_pa7, gpiocallback, event_queue);
+    furi_hal_gpio_enable_int_callback(&gpio_ext_pa7);
+    furi_hal_gpio_init(&gpio_ext_pa7, GpioModeInterruptFall, GpioPullUp, GpioSpeedVeryHigh);
 
     Gui* gui = furi_record_open(RECORD_GUI);
     gui_add_view_port(gui, view_port, GuiLayerFullscreen);
@@ -246,7 +247,8 @@ int32_t flipper_geiger_app() {
 
         if(event_status == FuriStatusOk) {
             if(event.type == EventTypeInput) {
-                if(event.input.key == InputKeyBack && event.input.type == InputTypeLong) {
+                if(event.input.key == InputKeyBack &&
+                   (event.input.type == InputTypeShort || event.input.type == InputTypeLong)) {
                     break;
                 } else if(event.input.key == InputKeyOk && event.input.type == InputTypeLong) {
                     counter = 0;
@@ -263,7 +265,7 @@ int32_t flipper_geiger_app() {
                     if(recordData == 0) {
                         notification_message(notification, &sequence_set_only_red_255);
 
-                        FuriHalRtcDateTime datetime;
+                        DateTime datetime;
                         furi_hal_rtc_get_datetime(&datetime);
 
                         char path[64];

@@ -32,7 +32,7 @@ static void camera_view_draw_callback(Canvas* canvas, void* _model) {
 }
 
 void get_timefilename(FuriString* name) {
-    FuriHalRtcDateTime datetime = {0};
+    DateTime datetime = {0};
     furi_hal_rtc_get_datetime(&datetime);
     furi_string_printf(
         name,
@@ -262,6 +262,7 @@ static UartEchoApp* camera_app_alloc() {
 static void camera_app_free(UartEchoApp* app) {
     furi_assert(app);
 
+    furi_hal_serial_async_rx_stop(app->serial_handle);
     furi_hal_serial_deinit(app->serial_handle);
     furi_hal_serial_control_release(app->serial_handle);
 

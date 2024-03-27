@@ -196,13 +196,15 @@ const GPIO*
             return NULL;
         }
     }
-    if(interface == &SPI) {
+
+    // This check is incorrect and not working anymore
+    /*if(interface == &SPI) {
         if(!((gpio_interfaces_list[0] == NULL || gpio_interfaces_list[0] == &SPI) &&
              (gpio_interfaces_list[1] == NULL || gpio_interfaces_list[1] == &SPI) &&
              (gpio_interfaces_list[3] == NULL || gpio_interfaces_list[3] == &SPI))) {
             return NULL;
         }
-    }
+    }*/
 
     uint8_t aviable_index = 0;
     for(uint8_t i = 0; i < GPIO_ITEMS; i++) {
@@ -493,14 +495,14 @@ Sensor* unitemp_sensor_alloc(char* name, const SensorType* type, char* args) {
     Sensor* sensor = malloc(sizeof(Sensor));
     if(sensor == NULL) {
         FURI_LOG_E(APP_NAME, "Sensor %s allocation error", name);
-        return false;
+        return NULL;
     }
 
     //Выделение памяти под имя
     sensor->name = malloc(11);
     if(sensor->name == NULL) {
         FURI_LOG_E(APP_NAME, "Sensor %s name allocation error", name);
-        return false;
+        return NULL;
     }
     //Запись имени датчка
     strcpy(sensor->name, name);
