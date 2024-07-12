@@ -2,6 +2,7 @@
 enum SubmenuIndex {
     SubmenuIndexReadPicopass,
     SubmenuIndexRead14a,
+    SubmenuIndexReadMfc,
     SubmenuIndexSaved,
     SubmenuIndexSamInfo,
     SubmenuIndexFwVersion,
@@ -31,6 +32,12 @@ void seader_scene_sam_present_on_update(void* context) {
         submenu,
         "Read 14443A",
         SubmenuIndexRead14a,
+        seader_scene_sam_present_submenu_callback,
+        seader);
+    submenu_add_item(
+        submenu,
+        "Read MFC",
+        SubmenuIndexReadMfc,
         seader_scene_sam_present_submenu_callback,
         seader);
     submenu_add_item(
@@ -75,6 +82,11 @@ bool seader_scene_sam_present_on_event(void* context, SceneManagerEvent event) {
                 seader->scene_manager, SeaderSceneSamPresent, SubmenuIndexRead14a);
             scene_manager_next_scene(seader->scene_manager, SeaderSceneRead14a);
             consumed = true;
+        } else if(event.event == SubmenuIndexReadMfc) {
+            scene_manager_set_scene_state(
+                seader->scene_manager, SeaderSceneSamPresent, SubmenuIndexReadMfc);
+            scene_manager_next_scene(seader->scene_manager, SeaderSceneReadMfc);
+            consumed = true;
         } else if(event.event == SubmenuIndexSamInfo) {
             scene_manager_set_scene_state(
                 seader->scene_manager, SeaderSceneSamPresent, SubmenuIndexSamInfo);
@@ -84,6 +96,9 @@ bool seader_scene_sam_present_on_event(void* context, SceneManagerEvent event) {
             scene_manager_next_scene(seader->scene_manager, SeaderSceneFileSelect);
             consumed = true;
         } else if(event.event == SubmenuIndexFwVersion) {
+            consumed = true;
+        } else if(event.event == SeaderWorkerEventSamMissing) {
+            scene_manager_next_scene(seader->scene_manager, SeaderSceneSamMissing);
             consumed = true;
         }
     } else if(event.type == SceneManagerEventTypeBack) {

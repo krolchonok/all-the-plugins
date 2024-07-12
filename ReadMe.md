@@ -13,7 +13,7 @@ Apps contains changes needed to compile them on latest firmware, fixes has been 
 
 The Flipper and its community wouldn't be as rich as it is without your contributions and support. Thank you for all you have done.
 
-### Apps checked & updated at `11 Apr 02:12 GMT +3`
+### Apps checked & updated at `8 Jul 17:29 GMT +3`
 
 
 # Default pack
@@ -164,8 +164,7 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | Bar code scanner emulator via COM port | ![GPIO Badge] | [by polarikus](https://github.com/polarikus/flipper-zero_bc_scanner_emulator) |  | ![None Badge] |
 | ESP32->Flipper Camera | ![GPIO Badge] | [by Z4urce](https://github.com/Z4urce/flipperzero-camera) |  | ![None Badge] |
 | RC2014 ColecoVision | ![GPIO Badge] | [by ezod](https://github.com/ezod/flipperzero-rc2014-coleco) |  | ![None Badge] |
-| ESP Flasher | ![GPIO Badge] | [by 0xchocolate](https://github.com/0xchocolate/flipperzero-esp-flasher) | QuickFlash mode and other changes [by @Willy-JL](https://github.com/Flipper-XFW/Xtreme-Apps/tree/dev/esp_flasher) | [![Author Badge]](https://lab.flipper.net/apps/esp_flasher) |
-| ESP32-C6 Gravity terminal | ![GPIO Badge] | [by chris-bc](https://github.com/chris-bc/Flipper-Gravity) |  | ![None Badge] |
+| ESP Flasher | ![GPIO Badge] | [by 0xchocolate](https://github.com/0xchocolate/flipperzero-esp-flasher) | QuickFlash mode and other changes [by @Willy-JL](https://github.com/Flipper-XFW/Xtreme-Apps/tree/dev/esp_flasher), Marauder [firmware source](https://github.com/justcallmekoko/ESP32Marauder), BlackMagic [firmware source](https://github.com/flipperdevices/blackmagic-esp32-s2) | [![Author Badge]](https://lab.flipper.net/apps/esp_flasher) |
 | IFTTT Virtual Button for ESP8266 | ![GPIO Badge] | [by Ferrazzi](https://github.com/Ferrazzi/FlipperZero_IFTTT_Virtual_Button) | Fixes [by Willy-JL](https://github.com/Flipper-XFW/Xtreme-Firmware/commit/ae321fb5f4c616d3965546926b1b4b446eef8d86) | ![None Badge] |
 | Wifi Deauth v2 for ESP8266 | ![GPIO Badge] | [by Timmotools](https://github.com/Timmotools/flipperzero_esp8266_deautherv2) |  | ![None Badge] |
 | Evil captive portal | ![GPIO Badge] | [by bigbrodude6119](https://github.com/bigbrodude6119/flipper-zero-evil-portal) | WIP -> +2 new features [by leedave](https://github.com/leedave/flipper-zero-evil-portal/tree/leedave/ap_rename) + Fixed and modded [by Willy-JL](https://github.com/Flipper-XFW/Xtreme-Firmware/tree/dev/applications/external/evil_portal) | ![None Badge] |
@@ -208,6 +207,7 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | SD-SPI | ![GPIO Badge] | [by Gl1tchub](https://github.com/Gl1tchub/Flipperzero-SD-SPI) | read more details in original repo | ![None Badge] |
 | ICM42688 Air Mouse | ![GPIO Badge] | [by nminaylov](https://github.com/flipperdevices/flipperzero-good-faps/pull/83/files) | read more details in [original repo](https://github.com/flipperdevices/flipperzero-good-faps/pull/83/files) | ![None Badge] |
 | WS2812B LED Tester | ![GPIO Badge] | [by jamisonderek](https://github.com/jamisonderek/flipper-zero-tutorials/tree/main/gpio/ws2812b_tester) | read more details in [original repo](https://github.com/jamisonderek/flipper-zero-tutorials/tree/main/gpio/ws2812b_tester) | ![None Badge] |
+| W5500 Ethernet Tester | ![GPIO Badge] | [by karasevia](https://github.com/karasevia/finik_eth) | [with fixes by arag0re](https://github.com/arag0re/fz-eth-troubleshooter/tree/hexUiFix) read more details in original repo | ![None Badge] |
 | IR Remote | ![IR Badge] | [by Hong5489](https://github.com/Hong5489/ir_remote) | improvements [by friebel](https://github.com/RogueMaster/flipperzero-firmware-wPlugins/pull/535) - Hold Option, RAW support [by d4ve10](https://github.com/d4ve10/ir_remote/tree/infrared_hold_option) | ![None Badge] |
 | IR Intervalometer | ![IR Badge] | [by Nitepone](https://github.com/Nitepone/flipper-intervalometer) |  | [![UFW Badge]](https://lab.flipper.net/apps/sony_intervalometer) |
 | IR Xbox Controller | ![IR Badge] | [by gebeto](https://github.com/gebeto/flipper-xbox-controller) |  | [![Author Badge]](https://lab.flipper.net/apps/xbox_controller) |
@@ -258,6 +258,7 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | Programmer Calculator | ![Tools Badge] | [by armixz](https://github.com/armixz/Flipper-Zero-Programmer-Calculator) |  | ![None Badge] |
 | Tone Generator | ![Tools Badge] | [by GEMISIS](https://github.com/GEMISIS/tone_gen/) |  | ![None Badge] |
 | DCF77 Clock Sync | ![Tools Badge] | [by mdaskalov](https://github.com/mdaskalov/dcf77-clock-sync) |  | ![None Badge] |
+| Quac! Remote | ![Tools Badge] | [by rdefeo](https://github.com/rdefeo/quac) | Various fixes by @Willy-JL | [![Author Badge]](https://lab.flipper.net/apps/quac) |
 | USB HID Autofire | ![USB Badge] | [by pbek](https://github.com/pbek/usb_hid_autofire) |  | ![None Badge] |
 | USB Consumer Control | ![USB Badge] | [by WithSecureLabs](https://github.com/WithSecureLabs/usb-consumer-control/tree/main) |  | ![None Badge] |
 | HID File Transfer | ![USB Badge] | [by Kavakuo](https://github.com/Kavakuo/HID-File-Transfer) | Get client app in [original repo](https://github.com/Kavakuo/HID-File-Transfer) | ![None Badge] |
