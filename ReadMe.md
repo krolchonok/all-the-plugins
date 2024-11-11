@@ -13,7 +13,7 @@ Apps contains changes needed to compile them on latest firmware, fixes has been 
 
 The Flipper and its community wouldn't be as rich as it is without your contributions and support. Thank you for all you have done.
 
-### Apps checked & updated at `11 Nov 13:32 GMT +3`
+### Apps checked & updated at `11 Nov 20:49 GMT +3`
 
 
 # Default pack
@@ -207,8 +207,9 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | SD-SPI | ![GPIO Badge] | [by Gl1tchub](https://github.com/Gl1tchub/Flipperzero-SD-SPI) | read more details in original repo | ![None Badge] |
 | ICM42688 Air Mouse | ![GPIO Badge] | [by nminaylov](https://github.com/flipperdevices/flipperzero-good-faps/pull/83/files) | read more details in [original repo](https://github.com/flipperdevices/flipperzero-good-faps/pull/83/files) | ![None Badge] |
 | WS2812B LED Tester | ![GPIO Badge] | [by jamisonderek](https://github.com/jamisonderek/flipper-zero-tutorials/tree/main/gpio/ws2812b_tester) | read more details in [original repo](https://github.com/jamisonderek/flipper-zero-tutorials/tree/main/gpio/ws2812b_tester) | ![None Badge] |
-| W5500 Ethernet Tester | ![GPIO Badge] | [by karasevia](https://github.com/karasevia/finik_eth) | [with fixes by arag0re](https://github.com/arag0re/fz-eth-troubleshooter/tree/hexUiFix) read more details in original repo | ![None Badge] |
+| W5500 Ethernet Tester | ![GPIO Badge] | [by karasevia](https://github.com/karasevia/finik_eth) | [with fixes by arag0re](https://github.com/arag0re/fz-eth-troubleshooter/tree/hexUiFix) read more details in ReadMe + SPI and UI fixes by @xMasterX | ![None Badge] |
 | Simultaneous UHF RFID | ![GPIO Badge] | [by haffnerriley](https://github.com/haffnerriley/Simultaneous-UHF-RFID-FlipperZero) | read more details in original repo | [![Author Badge]](https://lab.flipper.net/apps/simultaneous_rfid_reader) |
+| NRF24 Tool | ![GPIO Badge] | [by OuinOuin74](https://github.com/OuinOuin74/nrf24tool) | read more details in original repo | ![None Badge] |
 | IR Remote | ![IR Badge] | [by Hong5489](https://github.com/Hong5489/ir_remote) | improvements [by friebel](https://github.com/RogueMaster/flipperzero-firmware-wPlugins/pull/535) - Hold Option, RAW support [by d4ve10](https://github.com/d4ve10/ir_remote/tree/infrared_hold_option) | ![None Badge] |
 | IR Intervalometer | ![IR Badge] | [by Nitepone](https://github.com/Nitepone/flipper-intervalometer) |  | [![UFW Badge]](https://lab.flipper.net/apps/sony_intervalometer) |
 | IR Xbox Controller | ![IR Badge] | [by gebeto](https://github.com/gebeto/flipper-xbox-controller) |  | [![Author Badge]](https://lab.flipper.net/apps/xbox_controller) |
