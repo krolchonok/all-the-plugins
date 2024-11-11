@@ -99,7 +99,7 @@ steps:
         from_secret: fbt_link
 
   - name: "Bundle packages"
-    image: kramos/alpine-zip
+    image: joshkeegan/zip
     commands:
       - zip -r all-the-apps-extra.zip extra_pack_build
       - zip -r all-the-apps-base.zip base_pack_build
@@ -140,4 +140,4 @@ trigger:
     - tag
 
 node:
-  typ: dev3lc
+  typ: dev2
