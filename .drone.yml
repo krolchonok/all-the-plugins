@@ -140,4 +140,4 @@ trigger:
     - tag
 
 node:
-  typ: dev2
+  typ: dev3lc
