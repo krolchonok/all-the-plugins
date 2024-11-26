@@ -11,8 +11,7 @@ static uint8_t nfc_eink_screen_info_filter_by_mode(NfcEinkApp* instance) {
     uint8_t cnt = 0;
     switch(instance->settings.write_mode) {
     case NfcEinkWriteModeStrict:
-        cnt = nfc_eink_descriptor_filter_by_screen_type(
-            instance->arr, instance->info_temp->screen_type);
+        cnt = nfc_eink_descriptor_filter_by_name(instance->arr, instance->info_temp->name);
         break;
     case NfcEinkWriteModeResolution:
         cnt = nfc_eink_descriptor_filter_by_screen_size(
@@ -43,7 +42,7 @@ void nfc_eink_scene_choose_screen_on_enter(void* context) {
         const NfcEinkScreenInfo* item = *EinkScreenInfoArray_get(instance->arr, i);
         submenu_add_item(
             submenu, item->name, i, nfc_eink_scene_choose_screen_submenu_callback, instance);
-        FURI_LOG_W(TAG, "Item: %s, width: %d, height: %d", item->name, item->width, item->height);
+        FURI_LOG_D(TAG, "Item: %s, width: %d, height: %d", item->name, item->width, item->height);
     }
 
     view_dispatcher_switch_to_view(instance->view_dispatcher, NfcEinkViewMenu);
@@ -58,7 +57,7 @@ bool nfc_eink_scene_choose_screen_on_event(void* context, SceneManagerEvent even
         const uint32_t index = event.event;
         const NfcEinkScreenInfo* item = *EinkScreenInfoArray_get(instance->arr, index);
         instance->screen = nfc_eink_screen_alloc(item->screen_manufacturer);
-        nfc_eink_screen_init(instance->screen, item->screen_type);
+        nfc_eink_screen_init(instance->screen, item->name);
 
         instance->screen_loaded = nfc_eink_screen_load_data(
             furi_string_get_cstr(instance->file_path), instance->screen, instance->info_temp);
