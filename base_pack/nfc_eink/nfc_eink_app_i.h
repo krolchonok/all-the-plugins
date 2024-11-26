@@ -54,8 +54,7 @@ typedef enum {
     NfcEinkAppCustomEventUpdating,
     NfcEinkAppCustomEventProcessFinish,
     NfcEinkAppCustomEventTargetDetected,
-    NfcEinkAppCustomEventTargetLost,
-    NfcEinkAppCustomEventUnknownError,
+    NfcEinkAppCustomEventError,
     NfcEinkAppCustomEventExit,
 } NfcEinkAppCustomEvents;
 
@@ -79,6 +78,12 @@ typedef enum {
     NfcEinkWriteModeManufacturer,
     NfcEinkWriteModeFree
 } NfcEinkWriteMode;
+
+typedef enum {
+    NfcEinkLoadResultFailed,
+    NfcEinkLoadResultSuccess,
+    NfcEinkLoadResultCanceled,
+} NfcEinkLoadResult;
 
 typedef struct {
     NfcEinkWriteMode write_mode;
@@ -111,6 +116,7 @@ struct NfcEinkApp {
     NfcListener* listener;
     NfcPoller* poller;
     NfcEinkScreen* screen;
+    NfcEinkScreenError last_error;
     const NfcEinkScreenInfo* info_temp;
     EinkScreenInfoArray_t arr;
     NfcEinkSettings settings;
@@ -121,7 +127,7 @@ struct NfcEinkApp {
     FuriString* file_name;
 };
 
-bool nfc_eink_load_from_file_select(NfcEinkApp* instance);
+NfcEinkLoadResult nfc_eink_load_from_file_select(NfcEinkApp* instance);
 void nfc_eink_blink_emulate_start(NfcEinkApp* app);
 void nfc_eink_blink_write_start(NfcEinkApp* app);
 void nfc_eink_blink_stop(NfcEinkApp* app);
