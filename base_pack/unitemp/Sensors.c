@@ -651,6 +651,8 @@ UnitempStatus unitemp_sensor_updateData(Sensor* sensor) {
             unitemp_pascalToInHg(sensor);
         } else if(app->settings.pressure_unit == UT_PRESSURE_KPA) {
             unitemp_pascalToKPa(sensor);
+        } else if(app->settings.pressure_unit == UT_PRESSURE_HPA) {
+            unitemp_pascalToHPa(sensor);
         }
     }
     return sensor->status;
