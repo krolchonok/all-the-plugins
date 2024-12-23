@@ -17,7 +17,8 @@ static void tx_handler(const uint8_t* buffer, size_t size) {
     furi_stream_buffer_send(cli_tx_stream, buffer, size, FuriWaitForever);
 }
 
-static void tx_handler_stdout(const char* buffer, size_t size) {
+static void tx_handler_stdout(const char* buffer, size_t size, void* context) {
+    UNUSED(context);
     tx_handler((const uint8_t*)buffer, size);
 }
 

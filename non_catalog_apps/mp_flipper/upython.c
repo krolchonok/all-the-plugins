@@ -10,7 +10,8 @@ volatile Action action = ActionNone;
 FuriString* file_path = NULL;
 volatile FuriThreadStdoutWriteCallback stdout_callback = NULL;
 
-static void write_to_log_output(const char* data, size_t size) {
+static void write_to_log_output(const char* data, size_t size, void* context) {
+    UNUSED(context);
     furi_log_tx((const uint8_t*)data, size);
 }
 
