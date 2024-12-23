@@ -41,7 +41,7 @@ int32_t upython(void* args) {
         case ActionRepl:
             break;
         case ActionExec:
-            furi_thread_set_stdout_callback(stdout_callback);
+            furi_thread_set_stdout_callback(stdout_callback, NULL);
 
             upython_file_execute(file_path);
 
@@ -49,7 +49,7 @@ int32_t upython(void* args) {
 
             action = ActionNone;
 
-            furi_thread_set_stdout_callback(stdout_callback = NULL);
+            furi_thread_set_stdout_callback(stdout_callback = NULL, NULL);
 
             break;
         case ActionExit:

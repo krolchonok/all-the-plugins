@@ -33,9 +33,9 @@ static size_t real_rx_handler(uint8_t* buffer, size_t size, uint32_t timeout) {
         rx_cnt += len;
     }
     if(restore_tx_stdout) {
-        furi_thread_set_stdout_callback(cli_vcp.tx_stdout);
+        furi_thread_set_stdout_callback(cli_vcp.tx_stdout, NULL);
     } else {
-        furi_thread_set_stdout_callback(tx_handler_stdout);
+        furi_thread_set_stdout_callback(tx_handler_stdout, NULL);
     }
     return rx_cnt;
 }
@@ -88,7 +88,7 @@ void clicontrol_hijack(size_t tx_size, size_t rx_size) {
     cli_session_close(global_cli);
     restore_tx_stdout = false;
     cli_session_open(global_cli, session);
-    furi_thread_set_stdout_callback(prev_stdout);
+    furi_thread_set_stdout_callback(prev_stdout, NULL);
 
     furi_record_close(RECORD_CLI);
 }
@@ -135,7 +135,7 @@ void clicontrol_unhijack(bool persist) {
     FuriThreadStdoutWriteCallback prev_stdout = furi_thread_get_stdout_callback();
     cli_session_close(global_cli);
     cli_session_open(global_cli, &cli_vcp);
-    furi_thread_set_stdout_callback(prev_stdout);
+    furi_thread_set_stdout_callback(prev_stdout, NULL);
     furi_record_close(RECORD_CLI);
 
     // Unblock waiting rx handler, restore old cli_vcp.tx_stdout
