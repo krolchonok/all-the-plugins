@@ -11,20 +11,21 @@
 
 #include "quac_icons.h"
 
-#define ITEM_FIRST_OFFSET 17
-#define ITEM_NEXT_OFFSET 4
-#define ITEM_HEIGHT 14
-#define ITEM_WIDTH 64
+#define ITEM_FIRST_OFFSET  17
+#define ITEM_NEXT_OFFSET   4
+#define ITEM_HEIGHT        14
+#define ITEM_WIDTH         64
 #define BUTTONS_PER_SCREEN 6
 
 #define ITEMS_PER_SCREEN_LANDSCAPE 3
-#define ITEMS_PER_SCREEN_PORTRAIT 6
+#define ITEMS_PER_SCREEN_PORTRAIT  6
 
 static const Icon* ActionMenuIcons[] = {
     [ActionMenuItemTypeSubGHz] = &I_SubGHz_10px,
     [ActionMenuItemTypeRFID] = &I_RFID_10px,
     [ActionMenuItemTypeIR] = &I_IR_10px,
     [ActionMenuItemTypeNFC] = &I_NFC_10px,
+    [ActionMenuItemTypeiButton] = &I_iButton_10px,
     [ActionMenuItemTypePlaylist] = &I_Playlist_10px,
     [ActionMenuItemTypeGroup] = &I_Directory_10px,
     [ActionMenuItemTypeSettings] = &I_Settings_10px,

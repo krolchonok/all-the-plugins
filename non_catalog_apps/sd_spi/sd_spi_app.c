@@ -253,7 +253,7 @@ void app_scene_on_enter_password(void* context) {
         text_input_done_callback,
         app,
         app->input_pwd,
-        PASSWORD_MAX_LEN,
+        PASSWORD_MAX_LEN+1,
         false);
     view_dispatcher_switch_to_view(app->view_dispatcher, AppView_TextInput);
 }
@@ -460,7 +460,7 @@ void app_scene_manager_init(SDSPIApp* app) {
 void app_view_dispatcher_init(SDSPIApp* app) {
     FURI_LOG_T(TAG, "app_view_dispatcher_init");
     app->view_dispatcher = view_dispatcher_alloc();
-    view_dispatcher_enable_queue(app->view_dispatcher);
+    
 
     // allocate each view
     FURI_LOG_D(TAG, "app_view_dispatcher_init allocating views");

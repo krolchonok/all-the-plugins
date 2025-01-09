@@ -1,5 +1,6 @@
 #include "cli_shared_methods.h"
 #include <cli/cli.h>
+
 #include <lib/toolbox/args.h>
 #include "cli_helpers.h"
 #include "../types/plugin_event.h"

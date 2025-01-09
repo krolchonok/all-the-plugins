@@ -16,8 +16,8 @@
 #include "views/action_menu.h"
 #include "item.h"
 
-#define QUAC_NAME "Quac!"
-#define QUAC_VERSION "v0.6"
+#define QUAC_NAME    "Quac!"
+#define QUAC_VERSION "v0.7.0"
 #define QUAC_ABOUT                                    \
     "Quick Action remote control\n" QUAC_VERSION "\n" \
     "github.com/rdefeo/quac"
@@ -25,9 +25,12 @@
 
 // Location of our actions and folders
 #define QUAC_SETTINGS_FILENAME ".quac.conf"
-#define QUAC_SETTINGS_PATH APP_DATA_PATH(QUAC_SETTINGS_FILENAME)
+#define QUAC_SETTINGS_PATH     APP_DATA_PATH(QUAC_SETTINGS_FILENAME)
 
-typedef enum { QUAC_APP_PORTRAIT, QUAC_APP_LANDSCAPE } QuacAppLayout;
+typedef enum {
+    QUAC_APP_PORTRAIT,
+    QUAC_APP_LANDSCAPE
+} QuacAppLayout;
 
 typedef struct App {
     SceneManager* scene_manager;
@@ -49,6 +52,7 @@ typedef struct App {
 
     FuriString* temp_str; // used for renames/etc
     char temp_cstr[MAX_NAME_LEN]; // used for renames/etc
+    uint32_t temp_u32;
 
     struct {
         QuacAppLayout layout; // Defaults to Portrait
@@ -56,8 +60,10 @@ typedef struct App {
         bool show_headers; // Defaults to True
         uint32_t rfid_duration; // Defaults to 2500 ms
         uint32_t nfc_duration; // Defaults to 1000 ms
+        uint32_t ibutton_duration; // Defaults to 1000 ms
         uint32_t subghz_repeat; // Defaults to 10, just like the CLI
         bool subghz_use_ext_antenna; // Defaults to False
+        bool ir_use_ext_module; // Defaults to False
         bool show_hidden; // Defaults to False
     } settings;
 

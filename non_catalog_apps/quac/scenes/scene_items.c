@@ -19,6 +19,7 @@ static const ActionMenuItemType ItemToMenuItem[] = {
     [Item_RFID] = ActionMenuItemTypeRFID,
     [Item_IR] = ActionMenuItemTypeIR,
     [Item_NFC] = ActionMenuItemTypeNFC,
+    [Item_iButton] = ActionMenuItemTypeiButton,
     [Item_Playlist] = ActionMenuItemTypePlaylist,
     [Item_Group] = ActionMenuItemTypeGroup,
     [Item_Settings] = ActionMenuItemTypeSettings,
@@ -75,7 +76,7 @@ void scene_items_on_enter(void* context) {
         // Add a bogus item - this lets the user still access the Action menu to import, etc
         action_menu_add_item(
             menu,
-            "<Empty>",
+            "<Empty, Hold Right>",
             EMPTY_ACTION_INDEX,
             scene_items_item_callback,
             ActionMenuItemTypeGroup,

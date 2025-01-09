@@ -1,4 +1,5 @@
 #pragma once
+#define ASN_EMIT_DEBUG 0
 
 #include <stdlib.h> // malloc
 #include <stdint.h> // uint32_t
@@ -50,8 +51,11 @@
 #include "seader.h"
 #include "ccid.h"
 #include "uart.h"
+#include "lrc.h"
+#include "t_1.h"
 #include "seader_worker.h"
 #include "seader_credential.h"
+#include "apdu_log.h"
 
 #define WORKER_ALL_RX_EVENTS                                                      \
     (WorkerEvtStop | WorkerEvtRxDone | WorkerEvtCfgChange | WorkerEvtLineCfgSet | \
@@ -69,6 +73,7 @@ enum SeaderCustomEvent {
     SeaderCustomEventByteInputDone,
     SeaderCustomEventTextInputDone,
 
+    SeaderCustomEventPollerDetect,
     SeaderCustomEventPollerSuccess,
 };
 
@@ -85,6 +90,11 @@ typedef enum {
     WorkerEvtLineCfgSet = (1 << 6),
     WorkerEvtCtrlLineSet = (1 << 7),
 } WorkerEvtFlags;
+
+typedef struct {
+    uint16_t total_lines;
+    uint16_t current_line;
+} SeaderAPDURunnerContext;
 
 struct Seader {
     bool revert_power;
@@ -117,6 +127,9 @@ struct Seader {
 
     PluginManager* plugin_manager;
     PluginWiegand* plugin_wiegand;
+
+    APDULog* apdu_log;
+    SeaderAPDURunnerContext apdu_runner_ctx;
 };
 
 struct SeaderPollerContainer {
