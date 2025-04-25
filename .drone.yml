@@ -41,6 +41,7 @@ steps:
       - rm -f artifacts-base/iButton/ibutton.fap
       - rm -f artifacts-base/Infrared/infrared.fap
       - rm -f artifacts-base/NFC/nfc.fap
+      - rm -f artifacts-base/NFC/mfkey.fap
       - rm -f artifacts-base/RFID/lfrfid.fap
       - rm -f artifacts-base/Sub-GHz/subghz_remote.fap
       - rm -f artifacts-base/Tools/clock.fap
@@ -49,6 +50,7 @@ steps:
       - rm -f artifacts-base/Games/snake.fap
       - rm -f artifacts-base/USB/hid_usb.fap
       - rm -f artifacts-base/Bluetooth/hid_ble.fap
+      - rm -f artifacts-base/Bluetooth/findmy.fap
       - rm -rf artifacts-base/Scripts/
       - cd ..
       - mkdir base_pack_build
@@ -82,6 +84,7 @@ steps:
       - rm -f artifacts-extra/iButton/ibutton.fap
       - rm -f artifacts-extra/Infrared/infrared.fap
       - rm -f artifacts-extra/NFC/nfc.fap
+      - rm -f artifacts-extra/NFC/mfkey.fap
       - rm -f artifacts-extra/RFID/lfrfid.fap
       - rm -f artifacts-extra/Sub-GHz/subghz_remote.fap
       - rm -f artifacts-extra/Tools/clock.fap
@@ -90,6 +93,7 @@ steps:
       - rm -f artifacts-extra/Games/snake.fap
       - rm -f artifacts-extra/USB/hid_usb.fap
       - rm -f artifacts-extra/Bluetooth/hid_ble.fap
+      - rm -f artifacts-extra/Bluetooth/findmy.fap
       - rm -rf artifacts-extra/Scripts/
       - cd ..
       - mkdir extra_pack_build

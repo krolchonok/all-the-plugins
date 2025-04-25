@@ -1,7 +1,8 @@
 #include <stdio.h>
 
-#include <cli/cli.h>
-
+#include <toolbox/cli/cli_command.h>
+#include <cli/cli_main_commands.h>
+#include <cli/cli_ansi.h>
 #include <furi.h>
 
 #include <genhdr/mpversion.h>
@@ -246,7 +247,8 @@ inline static bool continue_with_input(mp_flipper_repl_context_t* context) {
     return true;
 }
 
-void upython_repl_execute(Cli* cli) {
+void upython_repl_execute(PipeSide* pipe) {
+    UNUSED(pipe);
     size_t stack;
 
     const size_t heap_size = memmgr_get_free_heap() * 0.1;
@@ -285,10 +287,10 @@ void upython_repl_execute(Cli* cli) {
 
             // scan character loop
             do {
-                character = cli_getc(cli);
+                character = getchar();
 
                 // Ctrl + C
-                if(character == CliSymbolAsciiETX) {
+                if(character == CliKeyETX) {
                     context->cursor = 0;
 
                     furi_string_reset(context->line);
@@ -300,32 +302,32 @@ void upython_repl_execute(Cli* cli) {
                 }
 
                 // Ctrl + D
-                if(character == CliSymbolAsciiEOT) {
+                if(character == CliKeyEOT) {
                     exit = true;
 
                     break;
                 }
 
                 // skip line feed
-                if(character == CliSymbolAsciiLF) {
+                if(character == CliKeyLF) {
                     continue;
                 }
 
                 // handle carriage return
-                if(character == CliSymbolAsciiCR) {
+                if(character == CliKeyCR) {
                     furi_string_push_back(context->code, '\n');
                     furi_string_cat(context->code, context->line);
                     furi_string_trim(context->code);
 
-                    cli_nl(cli);
+                    printf("\r\n");
 
                     break;
                 }
 
                 // handle arrow keys
                 if(character >= 0x18 && character <= 0x1B) {
-                    character = cli_getc(cli);
-                    character = cli_getc(cli);
+                    character = getchar();
+                    character = getchar();
 
                     handle_arrow_keys(character, context);
 
@@ -333,14 +335,14 @@ void upython_repl_execute(Cli* cli) {
                 }
 
                 // handle tab, do autocompletion
-                if(character == CliSymbolAsciiTab) {
+                if(character == CliKeyTab) {
                     handle_autocomplete(context);
 
                     continue;
                 }
 
                 // handle backspace
-                if(character == CliSymbolAsciiBackspace || character == CliSymbolAsciiDel) {
+                if(character == CliKeyBackspace || character == CliKeyDEL) {
                     handle_backspace(context);
 
                     continue;
@@ -349,7 +351,7 @@ void upython_repl_execute(Cli* cli) {
                 // append at end
                 if(context->cursor == furi_string_size(context->line)) {
                     buffer[0] = character;
-                    cli_write(cli, (const uint8_t*)buffer, 1);
+                    putchar(character);
 
                     furi_string_push_back(context->line, character);
 

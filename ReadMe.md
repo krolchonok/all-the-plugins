@@ -13,7 +13,7 @@ Apps contains changes needed to compile them on latest firmware, fixes has been 
 
 The Flipper and its community wouldn't be as rich as it is without your contributions and support. Thank you for all you have done.
 
-### Apps checked & updated at `23 Dec 19:34 GMT +3`
+### Apps checked & updated at `23 Apr 03:14 GMT +3`
 
 
 # Default pack
@@ -89,7 +89,6 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | WAV Player | ![Media Badge] | [OFW: DrZlo13](https://github.com/flipperdevices/flipperzero-firmware/tree/zlo/wav-player) | Fixed and improved by [LTVA1](https://github.com/LTVA1/wav_player) -> Also outputs audio on `PA6` `3(A6)` pin | [![UFW Badge]](https://lab.flipper.net/apps/wav_player) |
 | Metronome | ![Media Badge] | [by panki27](https://github.com/panki27/Metronome) |  | [![UFW Badge]](https://lab.flipper.net/apps/metronome) |
 | Morse Code | ![Media Badge] | [by wh00hw](https://github.com/wh00hw/MorseCodeFAP) |  | [![UFW Badge]](https://lab.flipper.net/apps/morse_code) |
-| **BadKB** plugin | ![Tools Badge] | [by Willy-JL, ClaraCrazy, XFW contributors](https://github.com/Flipper-XFW/Xtreme-Firmware/tree/dev/applications/main/bad_kb) | BadKB (aka BadUSB via Bluetooth) | ![None Badge] |
 | BLE Spam | ![BT Badge] | [by @Willy-JL & @ECTO-1A & @Spooks4576](https://github.com/Next-Flip/Momentum-Apps/tree/dev/ble_spam) |  | ![None Badge] |
 | FindMy Flipper | ![BT Badge] | [by @MatthewKuKanich](https://github.com/MatthewKuKanich/FindMyFlipper) | Please Read [how to add keys here](https://github.com/MatthewKuKanich/FindMyFlipper) | ![None Badge] |
 
@@ -160,6 +159,8 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | Paper Plane | ![Games Badge] | [by Larry-the-Pig](https://github.com/Larry-the-Pig/flipper-plane) |  | ![None Badge] |
 | Air Labyrinth (VGM) | ![Games Badge] | [by jamisonderek](https://github.com/jamisonderek/flipper-zero-tutorials/tree/main/vgm/apps/air_labyrinth) |  | [![Author Badge]](https://lab.flipper.net/apps/air_labyrinth) |
 | Laser Tag | ![Games Badge] | [by @RocketGod-git & @jamisonderek](https://github.com/RocketGod-git/Flipper-Zero-Laser-Tag) | Works via IR | ![None Badge] |
+| Pinball0 | ![Games Badge] | [by rdefeo](https://github.com/rdefeo/pinball0) |  | ![None Badge] |
+| Quadrastic | ![Games Badge] | [by ivanbarsukov](https://github.com/ivanbarsukov/flipperzero-quadrastic) |  | ![None Badge] |
 | Air Mouse | ![GPIO Badge] | [by ginkage](https://github.com/ginkage/FlippAirMouse/) |  | [![Author Badge]](https://lab.flipper.net/apps/air_mouse) |
 | Plantower PMSx003 sensor reader | ![GPIO Badge] | [by 3cky](https://github.com/3cky/flipperzero-airmon) |  | [![UFW Badge]](https://lab.flipper.net/apps/airmon) |
 | Bar code scanner emulator via COM port | ![GPIO Badge] | [by polarikus](https://github.com/polarikus/flipper-zero_bc_scanner_emulator) |  | ![None Badge] |
@@ -212,6 +213,7 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | NRF24 Tool | ![GPIO Badge] | [by OuinOuin74](https://github.com/OuinOuin74/nrf24tool) | read more details in original repo | ![None Badge] |
 | SPI Terminal | ![GPIO Badge] | [by janwiesemann](https://github.com/janwiesemann/flipper-spi-terminal) | read more details in original repo | [![Author Badge]](https://lab.flipper.net/apps/flipper_spi_terminal) |
 | ESP32 Ghost | ![GPIO Badge] | [by Spooks4576 & jaylikesbunda](https://github.com/Spooks4576/ghost_esp_app) | read more details in original repo, [ESP32 firmware link](https://github.com/Spooks4576/Ghost_ESP/tree/main) | ![None Badge] |
+| Longwave Clock | ![GPIO Badge] | [by m7i-org](https://github.com/m7i-org/flipper_longwave_clock) | read more details in original repo | ![None Badge] |
 | IR Remote | ![IR Badge] | [by Hong5489](https://github.com/Hong5489/ir_remote) | improvements [by friebel](https://github.com/RogueMaster/flipperzero-firmware-wPlugins/pull/535) - Hold Option, RAW support [by d4ve10](https://github.com/d4ve10/ir_remote/tree/infrared_hold_option) | ![None Badge] |
 | IR Intervalometer | ![IR Badge] | [by Nitepone](https://github.com/Nitepone/flipper-intervalometer) |  | [![UFW Badge]](https://lab.flipper.net/apps/sony_intervalometer) |
 | IR Xbox Controller | ![IR Badge] | [by gebeto](https://github.com/gebeto/flipper-xbox-controller) |  | [![Author Badge]](https://lab.flipper.net/apps/xbox_controller) |
@@ -232,6 +234,9 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | Seader | ![NFC Badge] | [by bettse](https://github.com/bettse/seader/tree/main) | `Interface with a SAM from the Flipper Zero over UART` | [![Author Badge]](https://lab.flipper.net/apps/seader) |
 | VB Lab Migration Assistant | ![NFC Badge] | [by GMMan (cyanic)](https://github.com/GMMan/flipperzero-vb-migrate) |  | [![Author Badge]](https://lab.flipper.net/apps/vb_migrate) |
 | NFC Playlist | ![NFC Badge] | [by acegoal07](https://github.com/acegoal07/FlipperZero_NFC_Playlist/tree/main) |  | ![None Badge] |
+| Metroflip | ![NFC Badge] | [by luu176](https://github.com/luu176/Metroflip) |  | ![None Badge] |
+| NFC APDU Runner | ![NFC Badge] | [by SpenserCai](https://github.com/SpenserCai/nfc_apdu_runner) |  | ![None Badge] |
+| Passport Reader (Passy) | ![NFC Badge] | [by bettse](https://github.com/bettse/passy) |  | ![None Badge] |
 | RFID Beacon | ![RFID Badge] | [by nmrr](https://github.com/nmrr/flipperzero-rfidbeacon)  | `A letter/number Morse beacon on 125 kHz` | ![None Badge] |
 | EM4100 universal keys generator (for RFID Fuzzer) | ![RFID Badge] | [by Milk-Cool](https://github.com/Milk-Cool/fz-em4100-generator) |  | [![Author Badge]](https://lab.flipper.net/apps/key_generator) |
 | (Q)M100 UHF RFID | ![RFID Badge] | [by frux-c](https://github.com/frux-c/uhf_rfid) | WIP -> (+Added icon by @xMasterX) | ![None Badge] |
@@ -268,12 +273,14 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | Quac! Remote | ![Tools Badge] | [by rdefeo](https://github.com/rdefeo/quac) | Various fixes by @Willy-JL | [![Author Badge]](https://lab.flipper.net/apps/quac) |
 | Key Copier | ![Tools Badge] | [by zinongli](https://github.com/zinongli/KeyCopier) |  | ![None Badge] |
 | uPython | ![Tools Badge] | [by ofabel](https://github.com/ofabel/mp-flipper) | read more details in original repo | [![Author Badge]](https://lab.flipper.net/apps/upython) |
+| Nickname Generator | ![Tools Badge] | [by disaxq](https://github.com/disaxq/Nickname-Generator) |  | ![None Badge] |
 | USB HID Autofire | ![USB Badge] | [by pbek](https://github.com/pbek/usb_hid_autofire) |  | ![None Badge] |
 | USB Consumer Control | ![USB Badge] | [by WithSecureLabs](https://github.com/WithSecureLabs/usb-consumer-control/tree/main) |  | ![None Badge] |
 | HID File Transfer | ![USB Badge] | [by Kavakuo](https://github.com/Kavakuo/HID-File-Transfer) | Get client app in [original repo](https://github.com/Kavakuo/HID-File-Transfer) | ![None Badge] |
+| USB Game Controller (Xbox360) | ![USB Badge] | [by expected-ingot](https://github.com/expected-ingot/flipper-xinput) |  | ![None Badge] |
 
 
-#### Catalog links checked at `01 Sep 16:24 GMT +3`
+#### Catalog links checked at `13 Feb 01:00 GMT +3`
 
 --- 
 

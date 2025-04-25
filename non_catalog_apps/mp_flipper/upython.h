@@ -1,6 +1,7 @@
 #pragma once
 
-#include <cli/cli.h>
+#include <toolbox/cli/cli_command.h>
+#include <cli/cli_main_commands.h>
 #include <furi.h>
 
 #define TAG "uPython"
@@ -28,8 +29,8 @@ bool upython_select_python_file(FuriString* file_path);
 void upython_cli_register(void* args);
 void upython_cli_unregister(void* args);
 
-void upython_cli(Cli* cli, FuriString* args, void* ctx);
+void upython_cli(PipeSide* pipe, FuriString* args, void* ctx);
 
-void upython_repl_execute(Cli* cli);
+void upython_repl_execute(PipeSide* pipe);
 
 void upython_file_execute(FuriString* file);

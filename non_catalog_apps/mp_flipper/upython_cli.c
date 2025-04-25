@@ -7,10 +7,11 @@ static FuriStreamBuffer* stdout_buffer = NULL;
 
 static void write_to_stdout_buffer(const char* data, size_t size, void* context) {
     UNUSED(context);
+
     furi_stream_buffer_send(stdout_buffer, data, size, 0);
 }
 
-void upython_cli(Cli* cli, FuriString* args, void* ctx) {
+void upython_cli(PipeSide* pipe, FuriString* args, void* ctx) {
     UNUSED(ctx);
 
     if(action != ActionNone) {
@@ -22,7 +23,7 @@ void upython_cli(Cli* cli, FuriString* args, void* ctx) {
     if(furi_string_empty(args)) {
         action = ActionRepl;
 
-        upython_repl_execute(cli);
+        upython_repl_execute(pipe);
 
         action = ActionNone;
     } else {
@@ -61,9 +62,9 @@ void upython_cli_register(void* args) {
         action = ActionNone;
     }
 
-    Cli* cli = furi_record_open(RECORD_CLI);
+    CliRegistry* registry = furi_record_open(RECORD_CLI);
 
-    cli_add_command(cli, CLI, CliCommandFlagParallelSafe, upython_cli, NULL);
+    cli_registry_add_command(registry, CLI, CliCommandFlagParallelSafe, upython_cli, NULL);
 
     furi_record_close(RECORD_CLI);
 }
@@ -75,9 +76,9 @@ void upython_cli_unregister(void* args) {
         return;
     }
 
-    Cli* cli = furi_record_open(RECORD_CLI);
+    CliRegistry* registry = furi_record_open(RECORD_CLI);
 
-    cli_delete_command(cli, CLI);
+    cli_registry_delete_command(registry, CLI);
 
     furi_record_close(RECORD_CLI);
 }
