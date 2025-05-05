@@ -13,7 +13,7 @@ Apps contains changes needed to compile them on latest firmware, fixes has been 
 
 The Flipper and its community wouldn't be as rich as it is without your contributions and support. Thank you for all you have done.
 
-### Apps checked & updated at `23 Apr 03:14 GMT +3`
+### Apps checked & updated at `4 May 21:08 GMT +3`
 
 
 # Default pack
@@ -66,6 +66,7 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | MIFARE Classic Editor | ![NFC Badge] | [by TollyH](https://github.com/TollyH/flipper-apps/tree/main/mfc-editor) | edit dumps on flipper | [![Author Badge]](https://lab.flipper.net/apps/mfc_editor) |
 | **RFID Fuzzer** | ![RFID Badge] | [by @gid9798](https://github.com/DarkFlippers/Multi_Fuzzer) | original by Ganapati & xMasterX | [![UFW Badge]](https://lab.flipper.net/apps/fuzzer_rfid) |
 | **iButton Fuzzer** | ![iButton Badge] | [by @gid9798](https://github.com/DarkFlippers/Multi_Fuzzer) | original by xMasterX | [![UFW Badge]](https://lab.flipper.net/apps/fuzzer_ibtn) |
+| **iButton Converter** | ![iButton Badge] | [by @Leptopt1los](https://github.com/Leptopt1los/ibutton_converter) | | [![UFW Badge]](https://lab.flipper.net/apps/ibutton_converter) |
 | IR Scope | ![IR Badge] | [by kallanreed](https://github.com/DarkFlippers/unleashed-firmware/pull/407) |  | [![UFW Badge]](https://lab.flipper.net/apps/ir_scope) |
 | MultiConverter plugin | ![Tools Badge] | [by theisolinearchip](https://github.com/theisolinearchip/flipperzero_stuff) |  | [![UFW Badge]](https://lab.flipper.net/apps/multi_converter) |
 | Barcode Generator | ![Tools Badge] | [by Kingal1337](https://github.com/Kingal1337/flipper-barcode-generator) |  | [![UFW Badge]](https://lab.flipper.net/apps/barcode_app) |
@@ -219,6 +220,7 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | IR Xbox Controller | ![IR Badge] | [by gebeto](https://github.com/gebeto/flipper-xbox-controller) |  | [![Author Badge]](https://lab.flipper.net/apps/xbox_controller) |
 | XRemote | ![IR Badge] | [by kala13x](https://github.com/kala13x/flipper-xremote) | Check out original repo to find usage instructions! | [![Author Badge]](https://lab.flipper.net/apps/flipper_xremote) |
 | R.O.B. Control | ![IR Badge] | [by riney](https://github.com/riney/flip_rob) | Flipper app to control a Nintendo R.O.B./Family Computer Robot | ![None Badge] |
+| Flame RNG | ![IR Badge] | [by OrionW06](https://github.com/OrionW06/Flame-RNG) |  | ![None Badge] |
 | BPM Tapper | ![Media Badge] | [by panki27](https://github.com/panki27/bpm-tapper) |  | [![UFW Badge]](https://lab.flipper.net/apps/bpm_tapper) |
 | Flizzer Tracker | ![Media Badge] | [by LTVA1](https://github.com/LTVA1/flizzer_tracker) |  | [![Author Badge]](https://lab.flipper.net/apps/flizzer_tracker) |
 | Music Beeper | ![Media Badge] | [by qqMajiKpp / Haseo](https://github.com/qqmajikpp/) |  | ![None Badge] |
@@ -237,6 +239,8 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | Metroflip | ![NFC Badge] | [by luu176](https://github.com/luu176/Metroflip) |  | ![None Badge] |
 | NFC APDU Runner | ![NFC Badge] | [by SpenserCai](https://github.com/SpenserCai/nfc_apdu_runner) |  | ![None Badge] |
 | Passport Reader (Passy) | ![NFC Badge] | [by bettse](https://github.com/bettse/passy) |  | ![None Badge] |
+| Weebo | ![NFC Badge] | [by bettse](https://github.com/bettse/weebo) |  | ![None Badge] |
+| Seos | ![NFC Badge] | [by bettse](https://gitlab.com/bettse/flipper_seos) |  | ![None Badge] |
 | RFID Beacon | ![RFID Badge] | [by nmrr](https://github.com/nmrr/flipperzero-rfidbeacon)  | `A letter/number Morse beacon on 125 kHz` | ![None Badge] |
 | EM4100 universal keys generator (for RFID Fuzzer) | ![RFID Badge] | [by Milk-Cool](https://github.com/Milk-Cool/fz-em4100-generator) |  | [![Author Badge]](https://lab.flipper.net/apps/key_generator) |
 | (Q)M100 UHF RFID | ![RFID Badge] | [by frux-c](https://github.com/frux-c/uhf_rfid) | WIP -> (+Added icon by @xMasterX) | ![None Badge] |
