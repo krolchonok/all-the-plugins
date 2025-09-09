@@ -13,7 +13,7 @@ Apps contains changes needed to compile them on latest firmware, fixes has been 
 
 The Flipper and its community wouldn't be as rich as it is without your contributions and support. Thank you for all you have done.
 
-### Apps checked & updated at `20 Jul 04:20 GMT +3`
+### Apps checked & updated at `11 Aug 21:20 GMT +3`
 
 
 # Default pack
@@ -134,7 +134,7 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | Mandelbrot Set | ![Games Badge] | [by Possibly-Matt](https://github.com/Possibly-Matt/flipperzero-firmware-wPlugins) |  | [![UFW Badge]](https://lab.flipper.net/apps/mandelbrotset) |
 | Monty Hall | ![Games Badge] | [by DevMilanIan](https://github.com/RogueMaster/flipperzero-firmware-wPlugins/pull/203) |  | [![UFW Badge]](https://lab.flipper.net/apps/montyhall) |
 | Nu Pogodi! (Ну, погоди!) | ![Games Badge] | [by sionyx](https://github.com/sionyx/flipper_nupogodi) |  | [![UFW Badge]](https://lab.flipper.net/apps/nupogodi) |
-| Paint | ![Games Badge] | [by n-o-T-I-n-s-a-n-e](https://github.com/n-o-T-I-n-s-a-n-e) |  | [![UFW Badge]](https://lab.flipper.net/apps/paint) |
+| Paint | ![Games Badge] | [by iinsaane](https://github.com/iinsaane) |  | [![UFW Badge]](https://lab.flipper.net/apps/paint) |
 | Race | ![Games Badge] | [by zyuhel](https://github.com/zyuhel/flipperzero-racegame) |  | [![UFW Badge]](https://lab.flipper.net/apps/racegame) |
 | Reaction test Game | ![Games Badge] | [by Milk-Cool](https://github.com/Milk-Cool/fz-reaction-game) |  | [![UFW Badge]](https://lab.flipper.net/apps/reaction) |
 | Reversi | ![Games Badge] | [by dimat](https://github.com/dimat/flipperzero-reversi) |  | [![UFW Badge]](https://lab.flipper.net/apps/reversi) |
@@ -224,6 +224,7 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | ESP32 Ghost | ![GPIO Badge] | [by Spooks4576 & jaylikesbunda](https://github.com/Spooks4576/ghost_esp_app) | read more details in original repo, [ESP32 firmware link](https://github.com/Spooks4576/Ghost_ESP/tree/main) | ![None Badge] |
 | Longwave Clock | ![GPIO Badge] | [by m7i-org](https://github.com/m7i-org/flipper_longwave_clock) | read more details in original repo | ![None Badge] |
 | INA Meter | ![GPIO Badge] | [by cepetr](https://github.com/cepetr/flipper-tina) |  | [![Author Badge]](https://lab.flipper.net/apps/ina_meter) |
+| Nearby Files | ![GPIO Badge] | [by Stichoza](https://github.com/Stichoza/flipper-nearby-files) |  | [![Author Badge]](https://lab.flipper.net/apps/nearby_files) |
 | IR Remote | ![IR Badge] | [by Hong5489](https://github.com/Hong5489/ir_remote) | improvements [by friebel](https://github.com/RogueMaster/flipperzero-firmware-wPlugins/pull/535) - Hold Option, RAW support [by d4ve10](https://github.com/d4ve10/ir_remote/tree/infrared_hold_option) | ![None Badge] |
 | IR Intervalometer | ![IR Badge] | [by Nitepone](https://github.com/Nitepone/flipper-intervalometer) |  | [![UFW Badge]](https://lab.flipper.net/apps/sony_intervalometer) |
 | IR Xbox Controller | ![IR Badge] | [by gebeto](https://github.com/gebeto/flipper-xbox-controller) |  | [![Author Badge]](https://lab.flipper.net/apps/xbox_controller) |
@@ -265,10 +266,12 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | Frequency Analyzer (External) | ![SubGhz Badge] | [by xMasterX](https://github.com/DarkFlippers) | Cut from unleashed FW subghz app directly, with external module support (no path isolate, get random signals from space!) | ![None Badge] |
 | Genie Door Recorder | ![SubGhz Badge] | [by jamisonderek](https://github.com/jamisonderek/flipper-zero-tutorials) |  | [![Author Badge]](https://lab.flipper.net/apps/genie_record) |
 | SubGHz Signal Generator | ![SubGhz Badge] | [by RocketGod](https://github.com/RocketGod-Git/Flipper-Zero-SubGHz-Signal-Generator) |  | ![None Badge] |
+| Chief Cooker | ![SubGhz Badge] | [by denr01](https://github.com/denr01/FZ-ChiefCooker) |  | ![None Badge] |
+| SUB Analyzer | ![SubGhz Badge] | [by RocketGod](https://github.com/RocketGod-git/Flipper-Zero-SUB-Analyzer) |  | ![None Badge] |
 | Analog Clock | ![Tools Badge] | [by scrolltex](https://github.com/scrolltex/flipper_analog_clock) |  | [![UFW Badge]](https://lab.flipper.net/apps/analog_clock) |
 | Brainfuck interpreter | ![Tools Badge] | [by nymda](https://github.com/nymda/FlipperZeroBrainfuck) |  | [![UFW Badge]](https://lab.flipper.net/apps/brainfuck) |
 | Ceasar Cipher | ![Tools Badge] | [by panki27](https://github.com/panki27/caesar-cipher) |  | [![UFW Badge]](https://lab.flipper.net/apps/caesar_cipher) |
-| Calculator | ![Tools Badge] | [by n-o-T-I-n-s-a-n-e](https://github.com/n-o-T-I-n-s-a-n-e) |  | [![UFW Badge]](https://lab.flipper.net/apps/calculator) |
+| Calculator | ![Tools Badge] | [by iinsaane](https://github.com/iinsaane) |  | [![UFW Badge]](https://lab.flipper.net/apps/calculator) |
 | CLI-GUI Bridge | ![Tools Badge] | [by ranchordo](https://github.com/ranchordo/flipperzero-cli-bridge) | Fixes [by Willy-JL](https://github.com/Willy-JL) | ![None Badge] |
 | Count Down Timer | ![Tools Badge] | [by 0w0mewo](https://github.com/0w0mewo/fpz_cntdown_timer) |  | [![UFW Badge]](https://lab.flipper.net/apps/cntdown_tim) |
 | Counter | ![Tools Badge] | [by Krulknul](https://github.com/Krulknul/dolphin-counter) |  | [![UFW Badge]](https://lab.flipper.net/apps/counter) |
