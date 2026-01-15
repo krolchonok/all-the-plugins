@@ -13,7 +13,7 @@ Apps contains changes needed to compile them on latest firmware, fixes has been 
 
 The Flipper and its community wouldn't be as rich as it is without your contributions and support. Thank you for all you have done.
 
-### Apps checked & updated at `13 Oct 21:37 GMT +3`
+### Apps checked & updated at `9 Jan 12:38 GMT +3`
 
 
 # Default pack
@@ -254,11 +254,16 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | Passport Reader (Passy) | ![NFC Badge] | [by bettse](https://github.com/bettse/passy) |  | [![Author Badge]](https://lab.flipper.net/apps/passy) |
 | Weebo | ![NFC Badge] | [by bettse](https://github.com/bettse/weebo) |  | [![Author Badge]](https://lab.flipper.net/apps/weebo) |
 | Seos | ![NFC Badge] | [by bettse](https://gitlab.com/bettse/flipper_seos) |  | [![Author Badge]](https://lab.flipper.net/apps/seos) |
+| SaFlip | ![NFC Badge] | [by aaronjamt](https://github.com/aaronjamt/saflip) |  | ![None Badge] |
+| NFC Comparator | ![NFC Badge] | [by acegoal07](https://github.com/acegoal07/FlipperZero_NFC_Comparator) |  | ![None Badge] |
+| Ami Toolkit | ![NFC Badge] | [by Firefox2100](https://github.com/Firefox2100/flipper-amiibo-toolkit) |  | ![None Badge] |
+| NFC PC Login | ![NFC Badge] | [by Play2BReal](https://github.com/Play2BReal/NFC-Login) |  | ![None Badge] |
 | RFID Beacon | ![RFID Badge] | [by nmrr](https://github.com/nmrr/flipperzero-rfidbeacon)  | `A letter/number Morse beacon on 125 kHz` | ![None Badge] |
 | EM4100 universal keys generator (for RFID Fuzzer) | ![RFID Badge] | [by Milk-Cool](https://github.com/Milk-Cool/fz-em4100-generator) |  | [![Author Badge]](https://lab.flipper.net/apps/key_generator) |
 | (Q)M100 UHF RFID | ![RFID Badge] | [by frux-c](https://github.com/frux-c/uhf_rfid) | WIP -> (+Added icon by @xMasterX) | [![UFW Badge]](https://lab.flipper.net/apps/uhf_rfid) |
 | T5577 Multiwriter | ![RFID Badge] | [by Leptopt1los](https://github.com/Leptopt1los/t5577_multiwriter) | | [![UFW Badge]](https://lab.flipper.net/apps/t5577_multiwriter) |
 | T5577 Raw Writer | ![RFID Badge] | [by zinongli](https://github.com/zinongli/T5577_Raw_Writer) | | [![Author Badge]](https://lab.flipper.net/apps/t5577_writer) |
+| FDX-B Maker | ![RFID Badge] | [by snowsign](https://github.com/snowsign/fdxb-maker) | | [![Author Badge]](https://lab.flipper.net/apps/fdxb_maker) |
 | Enhanced Sub-GHz Chat | ![SubGhz Badge] | [by twisted-pear](https://github.com/twisted-pear/esubghz_chat) |  | [![UFW Badge]](https://lab.flipper.net/apps/esubghz_chat) |
 | TPMS Reader | ![SubGhz Badge] | [by wosk](https://github.com/wosk/flipperzero-tpms/tree/main) |  | [![UFW Badge]](https://lab.flipper.net/apps/tpms) |
 | ShapShup | ![SubGhz Badge] | [by derskythe](https://github.com/derskythe/flipperzero-shapshup) | RAW files preview (+fixed app exit) | ![None Badge] |
@@ -302,10 +307,13 @@ The Flipper and its community wouldn't be as rich as it is without your contribu
 | Combo Cracker | ![Tools Badge] | [by CharlesTheGreat77](https://github.com/CharlesTheGreat77/ComboCracker-FZ) |  | ![None Badge] |
 | FlipCrypt | ![Tools Badge] | [by Tyl3rA](https://github.com/Tyl3rA/FlipCrypt) |  | ![None Badge] |
 | Flipper Time Tracker | ![Tools Badge] | [by MassivDash](https://github.com/MassivDash/flipper-tracker) |  | [![Author Badge]](https://lab.flipper.net/apps/trackerflipx) |
+| IconEdit | ![Tools Badge] | [by rdefeo](https://github.com/rdefeo/iconedit) |  | [![Author Badge]](https://lab.flipper.net/apps/iconedit) |
+| CAN Tools | ![Tools Badge] | [by MatthewKuKanich](https://github.com/MatthewKuKanich/FlipperCANTools/tree/main/can_tools) |  | ![None Badge] |
 | USB HID Autofire | ![USB Badge] | [by pbek](https://github.com/pbek/usb_hid_autofire) |  | [![UFW Badge]](https://lab.flipper.net/apps/usb_hid_autofire) |
 | USB Consumer Control | ![USB Badge] | [by WithSecureLabs](https://github.com/WithSecureLabs/usb-consumer-control/tree/main) |  | ![None Badge] |
 | HID File Transfer | ![USB Badge] | [by Kavakuo](https://github.com/Kavakuo/HID-File-Transfer) | Get client app in [original repo](https://github.com/Kavakuo/HID-File-Transfer) | ![None Badge] |
 | USB Game Controller (Xbox360) | ![USB Badge] | [by expected-ingot](https://github.com/expected-ingot/flipper-xinput) |  | ![None Badge] |
+| Lego Dimensions ToyPad Emu | ![USB Badge] | [by SegerEnd](https://github.com/SegerEnd/Flipper-Zero-LD-Toypad-Emulator) |  | [![Author Badge]](https://lab.flipper.net/apps/ldtoypad) |
 
 
 #### Catalog links checked at `13 Oct 2025 21:35 GMT +3`

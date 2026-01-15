@@ -5,17 +5,23 @@
 #include "sequential_file.h"
 #include <gui/modules/text_box.h>
 #include <furi_hal_serial.h>
+#include <storage/storage.h>
 
-#define WORKER_ALL_RX_EVENTS   (WorkerEvtStop | WorkerEvtRxDone | WorkerEvtPcapDone)
+uint32_t g_uart_rx_session_bytes = 0;
+bool g_uart_rx_session_started = false;
+uint32_t g_uart_callback_count = 0;
+
+#define WORKER_ALL_RX_EVENTS \
+    (WorkerEvtStop | WorkerEvtRxDone | WorkerEvtPcapDone | WorkerEvtCsvDone)
 #define PCAP_WRITE_CHUNK_SIZE  1024
 #define AP_LIST_TIMEOUT_MS     5000
 #define INITIAL_BUFFER_SIZE    2048
 #define BUFFER_GROWTH_FACTOR   1.5
-#define MAX_BUFFER_SIZE        (8 * 1024) // 8KB max
 #define MUTEX_TIMEOUT_MS       2500
 #define BUFFER_CLEAR_SIZE      128
 #define BUFFER_RESIZE_CHUNK    1024
 #define TEXT_SCROLL_GUARD_SIZE 64
+#define TEXT_TRUNCATE_FRACTION 6
 
 typedef enum {
     MARKER_STATE_IDLE,
@@ -23,38 +29,46 @@ typedef enum {
     MARKER_STATE_CLOSE
 } MarkerState;
 
-static TextBufferManager* text_buffer_alloc(void) {
+static TextBufferManager* text_buffer_alloc(char* backing_buffer) {
+    if(!backing_buffer) return NULL;
+
     TextBufferManager* manager = malloc(sizeof(TextBufferManager));
     if(!manager) return NULL;
 
-    manager->ring_buffer = malloc(RING_BUFFER_SIZE);
-    manager->view_buffer = malloc(VIEW_BUFFER_SIZE);
+    manager->buffer = backing_buffer;
+    manager->capacity = TEXT_LOG_BUFFER_SIZE;
+    manager->length = 0;
+    manager->view_buffer_len = 0;
+    manager->view_offset = 0;
     manager->mutex = furi_mutex_alloc(FuriMutexTypeNormal);
 
-    if(!manager->ring_buffer || !manager->view_buffer || !manager->mutex) {
-        free(manager->ring_buffer);
-        free(manager->view_buffer);
-        free(manager->mutex);
+    if(!manager->mutex) {
         free(manager);
         return NULL;
     }
 
-    manager->ring_read_index = 0;
-    manager->ring_write_index = 0;
-    manager->view_buffer_len = 0;
-    manager->buffer_full = false;
-
-    memset(manager->ring_buffer, 0, RING_BUFFER_SIZE);
-    memset(manager->view_buffer, 0, VIEW_BUFFER_SIZE);
-
+    memset(manager->buffer, 0, manager->capacity);
     return manager;
 }
 static void text_buffer_free(TextBufferManager* manager) {
     if(!manager) return;
     if(manager->mutex) furi_mutex_free(manager->mutex);
-    free(manager->ring_buffer);
-    free(manager->view_buffer);
     free(manager);
+}
+
+static void text_buffer_truncate_oldest(TextBufferManager* manager) {
+    if(manager->length < manager->capacity / TEXT_TRUNCATE_FRACTION) return;
+
+    size_t keep = manager->capacity - (manager->capacity / TEXT_TRUNCATE_FRACTION);
+    if(keep > manager->length) keep = manager->length;
+
+    size_t shift = manager->length - keep;
+    if(shift > 0 && keep > 0) {
+        memmove(manager->buffer, manager->buffer + shift, keep);
+    }
+
+    manager->length = keep;
+    manager->buffer[manager->length] = '\0';
 }
 
 static void text_buffer_add(TextBufferManager* manager, const char* data, size_t len) {
@@ -65,64 +79,138 @@ static void text_buffer_add(TextBufferManager* manager, const char* data, size_t
         return;
     }
 
-    for(size_t i = 0; i < len; i++) {
-        manager->ring_buffer[manager->ring_write_index] = data[i];
-        manager->ring_write_index = (manager->ring_write_index + 1) % RING_BUFFER_SIZE;
+    if(manager->length + len >= manager->capacity) {
+        text_buffer_truncate_oldest(manager);
+    }
 
-        if(manager->ring_write_index == manager->ring_read_index) {
-            manager->ring_read_index = (manager->ring_read_index + 1) % RING_BUFFER_SIZE;
-            manager->buffer_full = true;
-        }
+    size_t space = manager->capacity - manager->length - 1;
+    size_t to_copy = (len > space) ? space : len;
+    if(to_copy > 0) {
+        memcpy(manager->buffer + manager->length, data, to_copy);
+        manager->length += to_copy;
+        manager->buffer[manager->length] = '\0';
     }
 
     furi_mutex_release(manager->mutex);
 }
+void uart_reset_text_buffers(UartContext* uart) {
+    if(!uart || !uart->text_manager) return;
+
+    if(furi_mutex_acquire(uart->text_manager->mutex, 300) != FuriStatusOk) {
+        return;
+    }
+
+    memset(uart->text_manager->buffer, 0, uart->text_manager->capacity);
+    uart->text_manager->length = 0;
+    uart->text_manager->view_buffer_len = 0;
+    uart->text_manager->view_offset = 0;
+
+    furi_mutex_release(uart->text_manager->mutex);
+}
+bool uart_copy_text_buffer(UartContext* uart, char* out, size_t out_size, size_t* out_len) {
+    if(out_len) *out_len = 0;
+    if(!uart || !uart->text_manager || !out || out_size == 0) {
+        return false;
+    }
+
+    if(furi_mutex_acquire(uart->text_manager->mutex, 300) != FuriStatusOk) {
+        return false;
+    }
+
+    size_t len = uart->text_manager->view_buffer_len;
+    size_t offset = uart->text_manager->view_offset;
+    if(len >= out_size) {
+        len = out_size - 1;
+    }
+
+    if(len > 0) {
+        size_t end = offset + len;
+        if(end >= uart->text_manager->capacity) end = uart->text_manager->capacity - 1;
+        char saved = uart->text_manager->buffer[end];
+        uart->text_manager->buffer[end] = '\0';
+        memcpy(out, uart->text_manager->buffer + offset, len);
+        uart->text_manager->buffer[end] = saved;
+    }
+    out[len] = '\0';
+    if(out_len) *out_len = len;
+
+    furi_mutex_release(uart->text_manager->mutex);
+
+    return true;
+}
+
+bool uart_copy_text_buffer_tail(UartContext* uart, char* out, size_t out_size, size_t* out_len) {
+    if(out_len) *out_len = 0;
+    if(!uart || !uart->text_manager || !out || out_size == 0) {
+        return false;
+    }
+
+    if(furi_mutex_acquire(uart->text_manager->mutex, 300) != FuriStatusOk) {
+        return false;
+    }
+
+    TextBufferManager* mgr = uart->text_manager;
+    size_t available = mgr->length;
+
+    size_t copy_size = (available >= out_size) ? (out_size - 1) : available;
+    size_t start = (available > copy_size) ? (available - copy_size) : 0;
+
+    if(copy_size > 0) {
+        size_t end = start + copy_size;
+        if(end >= mgr->capacity) end = mgr->capacity - 1;
+        char saved = mgr->buffer[end];
+        mgr->buffer[end] = '\0';
+        memcpy(out, mgr->buffer + start, copy_size);
+        mgr->buffer[end] = saved;
+    }
+    out[copy_size] = '\0';
+    if(out_len) *out_len = copy_size;
+
+    furi_mutex_release(uart->text_manager->mutex);
+    return true;
+}
+
 static void text_buffer_update_view(TextBufferManager* manager, bool view_from_start) {
     if(!manager) return;
 
     furi_mutex_acquire(manager->mutex, FuriWaitForever);
 
-    // Calculate available data
-    size_t available;
-    if(manager->buffer_full) {
-        available = RING_BUFFER_SIZE;
-    } else if(manager->ring_write_index >= manager->ring_read_index) {
-        available = manager->ring_write_index - manager->ring_read_index;
-    } else {
-        available = RING_BUFFER_SIZE - manager->ring_read_index + manager->ring_write_index;
-    }
-
-    // Limit to view buffer size
+    size_t available = manager->length;
     size_t copy_size = (available > VIEW_BUFFER_SIZE - 1) ? VIEW_BUFFER_SIZE - 1 : available;
 
-    // Choose starting point based on view preference
-    size_t start;
-    if(view_from_start) {
-        // Start from oldest data
-        start = manager->ring_read_index;
-    } else {
-        // Start from newest data that will fit in view
-        size_t data_to_skip = available > copy_size ? available - copy_size : 0;
-        start = (manager->ring_read_index + data_to_skip) % RING_BUFFER_SIZE;
+    size_t start = 0;
+    if(!view_from_start && available > copy_size) {
+        start = available - copy_size;
     }
 
-    // Copy data to view buffer
-    size_t j = 0;
-    for(size_t i = 0; i < copy_size; i++) {
-        size_t idx = (start + i) % RING_BUFFER_SIZE;
-        manager->view_buffer[j++] = manager->ring_buffer[idx];
-    }
-
-    manager->view_buffer[j] = '\0';
-    manager->view_buffer_len = j;
+    manager->view_offset = start;
+    manager->view_buffer_len = copy_size;
 
     furi_mutex_release(manager->mutex);
 }
+
+static char text_buffer_mark_view_terminator(TextBufferManager* manager) {
+    size_t end = manager->view_offset + manager->view_buffer_len;
+    if(end >= manager->capacity) end = manager->capacity - 1;
+    char saved = manager->buffer[end];
+    manager->buffer[end] = '\0';
+    return saved;
+}
+
+static void text_buffer_restore_view_terminator(TextBufferManager* manager, char saved_char) {
+    size_t end = manager->view_offset + manager->view_buffer_len;
+    if(end >= manager->capacity) end = manager->capacity - 1;
+    manager->buffer[end] = saved_char;
+}
 static void
     uart_rx_callback(FuriHalSerialHandle* handle, FuriHalSerialRxEvent event, void* context) {
+    g_uart_callback_count++;
+
     UartContext* uart = (UartContext*)context;
-    const char* mark_begin = "[BUF/BEGIN]";
-    const char* mark_close = "[BUF/CLOSE]";
+    const char* mark_pcap_begin = "[BUF/BEGIN]";
+    const char* mark_pcap_close = "[BUF/CLOSE]";
+    const char* mark_csv_begin = "[CSV/BEGIN]";
+    const char* mark_csv_close = "[CSV/CLOSE]";
     size_t mark_len = 11;
 
     if(!uart || !uart->text_manager || event != FuriHalSerialRxEventData) {
@@ -131,95 +219,135 @@ static void
 
     uint8_t data = furi_hal_serial_async_rx(handle);
 
+    g_uart_rx_session_bytes++;
+
     // Check if we're collecting a marker
     if(uart->mark_test_idx > 0) {
-        // Prevent buffer overflow
         if(uart->mark_test_idx >= sizeof(uart->mark_test_buf)) {
             uart->mark_test_idx = 0;
+            uart->mark_candidate_mask = 0;
             return;
         }
 
-        if(uart->mark_test_idx < mark_len &&
-           (data == mark_begin[uart->mark_test_idx] || data == mark_close[uart->mark_test_idx])) {
-            uart->mark_test_buf[uart->mark_test_idx++] = data;
+        if(uart->mark_test_idx < mark_len) {
+            uint8_t next_mask = 0;
+            if(uart->mark_candidate_mask & 0x01) {
+                if(data == mark_pcap_begin[uart->mark_test_idx]) next_mask |= 0x01;
+            }
+            if(uart->mark_candidate_mask & 0x02) {
+                if(data == mark_pcap_close[uart->mark_test_idx]) next_mask |= 0x02;
+            }
+            if(uart->mark_candidate_mask & 0x04) {
+                if(data == mark_csv_begin[uart->mark_test_idx]) next_mask |= 0x04;
+            }
+            if(uart->mark_candidate_mask & 0x08) {
+                if(data == mark_csv_close[uart->mark_test_idx]) next_mask |= 0x08;
+            }
 
-            if(uart->mark_test_idx == mark_len) {
+            if(next_mask) {
+                uart->mark_test_buf[uart->mark_test_idx++] = data;
+                uart->mark_candidate_mask = next_mask;
+
+                if(uart->mark_test_idx == mark_len) {
+                    furi_mutex_acquire(uart->text_manager->mutex, FuriWaitForever);
+
+                    if(uart->mark_candidate_mask & 0x01) {
+                        uart->csv = false;
+                        uart->pcap = true;
+                    } else if(uart->mark_candidate_mask & 0x02) {
+                        uart->pcap = false;
+                        uart->pcap_flush_pending = true;
+                        if(uart->rx_thread) {
+                            furi_thread_flags_set(
+                                furi_thread_get_id(uart->rx_thread), WorkerEvtPcapDone);
+                        }
+                    } else if(uart->mark_candidate_mask & 0x04) {
+                        uart->pcap = false;
+                        uart->csv = true;
+                    } else if(uart->mark_candidate_mask & 0x08) {
+                        uart->csv = false;
+                    }
+
+                    furi_mutex_release(uart->text_manager->mutex);
+                    uart->mark_test_idx = 0;
+                    uart->mark_candidate_mask = 0;
+                    return;
+                }
+                return;
+            } else {
                 furi_mutex_acquire(uart->text_manager->mutex, FuriWaitForever);
 
-                if(!memcmp(uart->mark_test_buf, mark_begin, mark_len)) {
-                    uart->pcap = true;
-                    FURI_LOG_I("UART", "Capture started");
-                } else if(!memcmp(uart->mark_test_buf, mark_close, mark_len)) {
-                    uart->pcap = false;
-                    FURI_LOG_I("UART", "Capture ended");
+                if(uart->rx_thread) {
+                    if(uart->pcap && uart->pcap_stream) {
+                        if(furi_stream_buffer_send(
+                               uart->pcap_stream, uart->mark_test_buf, uart->mark_test_idx, 0) ==
+                           uart->mark_test_idx) {
+                            furi_thread_flags_set(
+                                furi_thread_get_id(uart->rx_thread), WorkerEvtPcapDone);
+                        }
+                    } else if(uart->csv && uart->csv_stream) {
+                        if(furi_stream_buffer_send(
+                               uart->csv_stream, uart->mark_test_buf, uart->mark_test_idx, 0) ==
+                           uart->mark_test_idx) {
+                            furi_thread_flags_set(
+                                furi_thread_get_id(uart->rx_thread), WorkerEvtCsvDone);
+                        }
+                    } else if(uart->rx_stream) {
+                        if(furi_stream_buffer_send(
+                               uart->rx_stream, uart->mark_test_buf, uart->mark_test_idx, 0) ==
+                           uart->mark_test_idx) {
+                            furi_thread_flags_set(
+                                furi_thread_get_id(uart->rx_thread), WorkerEvtRxDone);
+                        }
+                    }
                 }
 
                 furi_mutex_release(uart->text_manager->mutex);
                 uart->mark_test_idx = 0;
-                return;
-            }
-            // Don't process marker bytes
-            return;
-        } else {
-            // Mismatch occurred, handle buffered bytes atomically
-            furi_mutex_acquire(uart->text_manager->mutex, FuriWaitForever);
+                uart->mark_candidate_mask = 0;
 
-            // Ensure valid thread and stream before sending
-            if(uart->rx_thread && (uart->pcap ? uart->pcap_stream : uart->rx_stream)) {
-                if(uart->pcap) {
-                    if(furi_stream_buffer_send(
-                           uart->pcap_stream, uart->mark_test_buf, uart->mark_test_idx, 0) ==
-                       uart->mark_test_idx) {
-                        furi_thread_flags_set(
-                            furi_thread_get_id(uart->rx_thread), WorkerEvtPcapDone);
-                    }
-                } else {
-                    if(furi_stream_buffer_send(
-                           uart->rx_stream, uart->mark_test_buf, uart->mark_test_idx, 0) ==
-                       uart->mark_test_idx) {
-                        furi_thread_flags_set(
-                            furi_thread_get_id(uart->rx_thread), WorkerEvtRxDone);
-                    }
+                if(data == mark_pcap_begin[0] || data == mark_pcap_close[0] ||
+                   data == mark_csv_begin[0] || data == mark_csv_close[0]) {
+                    uart->mark_test_buf[0] = data;
+                    uart->mark_test_idx = 1;
+                    uart->mark_candidate_mask = 0x0F;
+                    return;
                 }
             }
-
-            furi_mutex_release(uart->text_manager->mutex);
-            uart->mark_test_idx = 0;
         }
     }
 
-    // Start of a potential marker
-    if(data == mark_begin[0] || data == mark_close[0]) {
-        uart->mark_test_buf[0] = data;
-        uart->mark_test_idx = 1;
-        return;
+    if(uart->mark_test_idx == 0) {
+        if(data == mark_pcap_begin[0] || data == mark_pcap_close[0] || data == mark_csv_begin[0] ||
+           data == mark_csv_close[0]) {
+            uart->mark_test_buf[0] = data;
+            uart->mark_test_idx = 1;
+            uart->mark_candidate_mask = 0x0F;
+            return;
+        }
     }
 
     // Handle regular data atomically
     furi_mutex_acquire(uart->text_manager->mutex, FuriWaitForever);
 
     bool current_pcap = uart->pcap;
-    bool success = false;
+    bool current_csv = uart->csv;
 
     // Ensure valid thread and stream before sending
-    if(uart->rx_thread && (current_pcap ? uart->pcap_stream : uart->rx_stream)) {
-        if(current_pcap) {
+    if(uart->rx_thread) {
+        if(current_pcap && uart->pcap_stream) {
             if(furi_stream_buffer_send(uart->pcap_stream, &data, 1, 0) == 1) {
                 furi_thread_flags_set(furi_thread_get_id(uart->rx_thread), WorkerEvtPcapDone);
-                success = true;
-                FURI_LOG_D("UART", "Captured data byte (pcap=true): 0x%02X", data);
             }
-        } else {
+        } else if(current_csv && uart->csv_stream) {
+            if(furi_stream_buffer_send(uart->csv_stream, &data, 1, 0) == 1) {
+                furi_thread_flags_set(furi_thread_get_id(uart->rx_thread), WorkerEvtCsvDone);
+            }
+        } else if(uart->rx_stream) {
             if(furi_stream_buffer_send(uart->rx_stream, &data, 1, 0) == 1) {
                 furi_thread_flags_set(furi_thread_get_id(uart->rx_thread), WorkerEvtRxDone);
-                success = true;
-                FURI_LOG_D("UART", "Logged data byte (pcap=false): 0x%02X", data);
             }
         }
-    }
-
-    if(!success) {
-        FURI_LOG_W("UART", "Failed to send data byte: 0x%02X", data);
     }
 
     furi_mutex_release(uart->text_manager->mutex);
@@ -233,9 +361,9 @@ void handle_uart_rx_data(uint8_t* buf, size_t len, void* context) {
         return;
     }
 
-    // Only log data if NOT in PCAP mode
-    if(!state->uart_context->pcap && state->uart_context->storageContext &&
-       state->uart_context->storageContext->log_file &&
+    // Only log data if NOT in PCAP or CSV mode
+    if(!state->uart_context->pcap && !state->uart_context->csv &&
+       state->uart_context->storageContext && state->uart_context->storageContext->log_file &&
        state->uart_context->storageContext->HasOpenedFile) {
         static size_t bytes_since_sync = 0;
 
@@ -256,12 +384,23 @@ void handle_uart_rx_data(uint8_t* buf, size_t len, void* context) {
 
     // Update text display
     text_buffer_add(state->uart_context->text_manager, (char*)buf, len);
-    text_buffer_update_view(
-        state->uart_context->text_manager, state->settings.view_logs_from_start_index);
 
-    bool view_from_start = state->settings.view_logs_from_start_index;
-    text_box_set_text(state->text_box, state->uart_context->text_manager->view_buffer);
-    text_box_set_focus(state->text_box, view_from_start ? TextBoxFocusStart : TextBoxFocusEnd);
+    if(!state->text_box_user_scrolled) {
+        text_buffer_update_view(
+            state->uart_context->text_manager, state->settings.view_logs_from_start_index);
+
+        bool view_from_start = state->settings.view_logs_from_start_index;
+        if(state->text_box) {
+            TextBufferManager* mgr = state->uart_context->text_manager;
+            furi_mutex_acquire(mgr->mutex, FuriWaitForever);
+            char saved = text_buffer_mark_view_terminator(mgr);
+            text_box_set_text(state->text_box, mgr->buffer + mgr->view_offset);
+            text_box_set_focus(
+                state->text_box, view_from_start ? TextBoxFocusStart : TextBoxFocusEnd);
+            text_buffer_restore_view_terminator(mgr, saved);
+            furi_mutex_release(mgr->mutex);
+        }
+    }
 }
 
 static int32_t uart_worker(void* context) {
@@ -294,12 +433,38 @@ static int32_t uart_worker(void* context) {
 
         // Process PCAP data if stream is still valid
         if((events & WorkerEvtPcapDone) && uart->pcap_stream) {
-            size_t len =
-                furi_stream_buffer_receive(uart->pcap_stream, uart->rx_buf, RX_BUF_SIZE, 0);
-            FURI_LOG_D("Worker", "Processing pcap_stream data: %zu bytes", len);
+            size_t total = 0;
+            size_t len = 0;
+            do {
+                len = furi_stream_buffer_receive(uart->pcap_stream, uart->rx_buf, RX_BUF_SIZE, 0);
+                if(len > 0) {
+                    FURI_LOG_D("Worker", "Processing pcap_stream data: %zu bytes", len);
+                    if(uart->handle_rx_pcap_cb) {
+                        uart->handle_rx_pcap_cb(uart->rx_buf, len, uart);
+                    }
+                    total += len;
+                }
+            } while(len > 0);
 
-            if(len > 0 && uart->handle_rx_pcap_cb) {
-                uart->handle_rx_pcap_cb(uart->rx_buf, len, uart);
+            if(uart->pcap_flush_pending && uart->storageContext &&
+               uart->storageContext->current_file) {
+                storage_file_sync(uart->storageContext->current_file);
+                uart->pcap_flush_pending = false;
+                FURI_LOG_I(
+                    "Worker",
+                    "Flushed PCAP frame on CLOSE (drained %zu bytes, stream now synced)",
+                    total);
+            }
+        }
+
+        // Process CSV data if stream is still valid
+        if((events & WorkerEvtCsvDone) && uart->csv_stream) {
+            size_t len =
+                furi_stream_buffer_receive(uart->csv_stream, uart->rx_buf, RX_BUF_SIZE, 0);
+            FURI_LOG_D("Worker", "Processing csv_stream data: %zu bytes", len);
+
+            if(len > 0 && uart->handle_rx_csv_cb) {
+                uart->handle_rx_csv_cb(uart->rx_buf, len, uart);
             }
         }
     }
@@ -316,8 +481,13 @@ void update_text_box_view(AppState* state) {
         state->uart_context->text_manager, state->settings.view_logs_from_start_index);
 
     bool view_from_start = state->settings.view_logs_from_start_index;
-    text_box_set_text(state->text_box, state->uart_context->text_manager->view_buffer);
+    TextBufferManager* mgr = state->uart_context->text_manager;
+    furi_mutex_acquire(mgr->mutex, FuriWaitForever);
+    char saved = text_buffer_mark_view_terminator(mgr);
+    text_box_set_text(state->text_box, mgr->buffer + mgr->view_offset);
     text_box_set_focus(state->text_box, view_from_start ? TextBoxFocusStart : TextBoxFocusEnd);
+    text_buffer_restore_view_terminator(mgr, saved);
+    furi_mutex_release(mgr->mutex);
 }
 UartContext* uart_init(AppState* state) {
     uint32_t start_time = furi_get_tick();
@@ -333,15 +503,19 @@ UartContext* uart_init(AppState* state) {
     uart->state = state;
     uart->is_serial_active = false;
     uart->pcap = false;
+    uart->csv = false;
     uart->mark_test_idx = 0;
+    uart->mark_candidate_mask = 0;
     uart->pcap_buf_len = 0;
+    uart->pcap_flush_pending = false;
 
-    // Initialize rx/pcap streams
+    // Initialize rx stream
     uart->rx_stream = furi_stream_buffer_alloc(RX_BUF_SIZE, 1);
-    uart->pcap_stream = furi_stream_buffer_alloc(PCAP_BUF_SIZE, 1);
+    uart->pcap_stream = NULL; // Allocate on demand
+    uart->csv_stream = NULL; // Allocate on demand
 
-    if(!uart->rx_stream || !uart->pcap_stream) {
-        FURI_LOG_E("UART", "Failed to allocate stream buffers");
+    if(!uart->rx_stream) {
+        FURI_LOG_E("UART", "Failed to allocate rx stream buffer");
         uart_free(uart);
         return NULL;
     }
@@ -349,6 +523,7 @@ UartContext* uart_init(AppState* state) {
     // Set callbacks
     uart->handle_rx_data_cb = handle_uart_rx_data;
     uart->handle_rx_pcap_cb = uart_storage_rx_callback;
+    uart->handle_rx_csv_cb = uart_storage_rx_callback;
 
     // Initialize storage
     uart->storageContext = uart_storage_init(uart);
@@ -372,7 +547,7 @@ UartContext* uart_init(AppState* state) {
     }
 
     // Initialize text manager
-    uart->text_manager = text_buffer_alloc();
+    uart->text_manager = text_buffer_alloc(state->textBoxBuffer);
     if(!uart->text_manager) {
         FURI_LOG_E("UART", "Failed to allocate text manager");
         uart_free(uart);
@@ -385,7 +560,7 @@ UartContext* uart_init(AppState* state) {
     uart->rx_thread = furi_thread_alloc();
     if(uart->rx_thread) {
         furi_thread_set_name(uart->rx_thread, "UART_Receive");
-        furi_thread_set_stack_size(uart->rx_thread, 2048);
+        furi_thread_set_stack_size(uart->rx_thread, 4096);
         furi_thread_set_context(uart->rx_thread, uart);
         furi_thread_set_callback(uart->rx_thread, uart_worker);
         furi_thread_start(uart->rx_thread);
@@ -452,6 +627,11 @@ void uart_free(UartContext* uart) {
         uart->pcap_stream = NULL;
     }
 
+    if(uart->csv_stream) {
+        furi_stream_buffer_free(uart->csv_stream);
+        uart->csv_stream = NULL;
+    }
+
     // Clean up storage context
     if(uart->storageContext) {
         uart_storage_free(uart->storageContext);
@@ -509,12 +689,10 @@ bool uart_is_esp_connected(UartContext* uart) {
 
     // Clear and reset buffers atomically
     furi_mutex_acquire(uart->text_manager->mutex, FuriWaitForever);
-    memset(uart->text_manager->ring_buffer, 0, RING_BUFFER_SIZE);
-    memset(uart->text_manager->view_buffer, 0, VIEW_BUFFER_SIZE);
-    uart->text_manager->ring_read_index = 0;
-    uart->text_manager->ring_write_index = 0;
-    uart->text_manager->buffer_full = false;
+    memset(uart->text_manager->buffer, 0, uart->text_manager->capacity);
+    uart->text_manager->length = 0;
     uart->text_manager->view_buffer_len = 0;
+    uart->text_manager->view_offset = 0;
     furi_mutex_release(uart->text_manager->mutex);
 
     // Re-enable callbacks with clean state
@@ -542,13 +720,7 @@ bool uart_is_esp_connected(UartContext* uart) {
         while(furi_get_tick() - start_time < CMD_TIMEOUT_MS) {
             furi_mutex_acquire(uart->text_manager->mutex, FuriWaitForever);
 
-            size_t available =
-                uart->text_manager->buffer_full ?
-                    RING_BUFFER_SIZE :
-                (uart->text_manager->ring_write_index >= uart->text_manager->ring_read_index) ?
-                    uart->text_manager->ring_write_index - uart->text_manager->ring_read_index :
-                    RING_BUFFER_SIZE - uart->text_manager->ring_read_index +
-                        uart->text_manager->ring_write_index;
+            size_t available = uart->text_manager->length;
 
             if(available > 0) {
                 connected = true;
@@ -564,6 +736,33 @@ bool uart_is_esp_connected(UartContext* uart) {
 
     FURI_LOG_I("UART", "ESP connection check: %s", connected ? "Success" : "Failed");
     return connected;
+}
+
+void uart_cleanup_capture_streams(UartContext* uart) {
+    if(!uart) return;
+
+    if(uart->is_serial_active) {
+        furi_hal_serial_async_rx_stop(uart->serial_handle);
+    }
+
+    if(uart->pcap_stream) {
+        furi_stream_buffer_free(uart->pcap_stream);
+        uart->pcap_stream = NULL;
+        FURI_LOG_I("UART", "Freed PCAP stream on exit");
+    }
+    if(uart->csv_stream) {
+        furi_stream_buffer_free(uart->csv_stream);
+        uart->csv_stream = NULL;
+        FURI_LOG_I("UART", "Freed CSV stream on exit");
+    }
+
+    uart->pcap = false;
+    uart->csv = false;
+    uart->pcap_flush_pending = false;
+
+    if(uart->is_serial_active) {
+        furi_hal_serial_async_rx_start(uart->serial_handle, uart_rx_callback, uart, false);
+    }
 }
 
 bool uart_receive_data(
@@ -585,12 +784,90 @@ bool uart_receive_data(
         uart->storageContext->HasOpenedFile = false;
     }
 
-    uart->pcap = false; // Reset capture state
-    furi_stream_buffer_reset(uart->pcap_stream);
+    FURI_LOG_I(
+        "UART", "[INIT] uart_receive_data: BEFORE reset pcap=%d csv=%d", uart->pcap, uart->csv);
+    uart->pcap = false;
+    uart->csv = false;
+    uart->pcap_flush_pending = false;
+    FURI_LOG_I(
+        "UART",
+        "[INIT] uart_receive_data: AFTER reset pcap=%d csv=%d (should be 0 0)",
+        uart->pcap,
+        uart->csv);
 
-    // Clear display before switching view
-    text_box_set_text(state->text_box, "");
-    text_box_set_focus(state->text_box, TextBoxFocusEnd);
+    // Stop RX briefly to safely reconfigure streams
+    if(uart->is_serial_active) {
+        furi_hal_serial_async_rx_stop(uart->serial_handle);
+    }
+
+    // Reset or free streams
+    if(uart->pcap_stream) {
+        furi_stream_buffer_reset(uart->pcap_stream);
+    }
+    if(uart->csv_stream) {
+        furi_stream_buffer_reset(uart->csv_stream);
+    }
+
+    // Check if we need to allocate streams
+    if(extension && strlen(extension) > 0) {
+        if(strcmp(extension, "pcap") == 0) {
+            if(!uart->pcap_stream) {
+                uart->pcap_stream = furi_stream_buffer_alloc(PCAP_BUF_SIZE, 1);
+                FURI_LOG_I("UART", "Allocated PCAP stream");
+            }
+        } else if(strcmp(extension, "csv") == 0) {
+            if(!uart->csv_stream) {
+                uart->csv_stream = furi_stream_buffer_alloc(RX_BUF_SIZE, 1);
+                FURI_LOG_I("UART", "Allocated CSV stream");
+            }
+        }
+    } else {
+        // If not capturing, we can free unused streams to save memory
+        if(uart->pcap_stream) {
+            furi_stream_buffer_free(uart->pcap_stream);
+            uart->pcap_stream = NULL;
+            FURI_LOG_I("UART", "Freed PCAP stream");
+        }
+        if(uart->csv_stream) {
+            furi_stream_buffer_free(uart->csv_stream);
+            uart->csv_stream = NULL;
+            FURI_LOG_I("UART", "Freed CSV stream");
+        }
+    }
+
+    // Restart RX if it was active
+    if(uart->is_serial_active) {
+        furi_hal_serial_async_rx_start(uart->serial_handle, uart_rx_callback, uart, false);
+    }
+
+    g_uart_rx_session_bytes = 0;
+    g_uart_rx_session_started = false;
+    g_uart_callback_count = 0;
+
+    FURI_LOG_I("UART", "[INIT] Reset RX logging counters for new session");
+
+    state->text_box_user_scrolled = false;
+
+    if(uart->text_manager) {
+        const char* hint = "Press Right to resume.\nPress OK to STOP.\n";
+        text_buffer_add(uart->text_manager, hint, strlen(hint));
+        text_buffer_update_view(uart->text_manager, state->settings.view_logs_from_start_index);
+
+        if(state->text_box) {
+            bool view_from_start = state->settings.view_logs_from_start_index;
+            TextBufferManager* mgr = state->uart_context->text_manager;
+            char saved = text_buffer_mark_view_terminator(mgr);
+            text_box_set_text(state->text_box, mgr->buffer + mgr->view_offset);
+            text_box_set_focus(
+                state->text_box, view_from_start ? TextBoxFocusStart : TextBoxFocusEnd);
+            text_buffer_restore_view_terminator(mgr, saved);
+        }
+    } else if(state->text_box) {
+        const char* hint = "Press Right to resume.\nPress OK to STOP.\n";
+        text_box_set_text(state->text_box, hint);
+        bool view_from_start = state->settings.view_logs_from_start_index;
+        text_box_set_focus(state->text_box, view_from_start ? TextBoxFocusStart : TextBoxFocusEnd);
+    }
 
     // Open new file if needed
     if(prefix && extension && TargetFolder && strlen(prefix) > 1) {
